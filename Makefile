@@ -5,11 +5,11 @@ install:
 
 format:
 	@echo ">>> Formatting files using Black"
-	black *.py src/*.py
+	black .
 
 lint:
 	@echo ">>> Linting Python files"
-	ruff --disable=R,C --ignore-patterns=test_.*?py *.py src/*.py
+	ruff check .
 
 lint-container:
 	@echo ">>> Linting Dockerfile"
@@ -19,8 +19,8 @@ refactor:
 	format lint lint-container
 
 coverage:
-	@echo ">>> Creating pytest coverage report"
-	pytest --cov=./ --cov-report=xml
+	@echo ">>> Displaying pytest coverage report"
+	pytest --cov=./ tests/
 
 test:
 	@echo ">>> Running unit tests within existing environment"
