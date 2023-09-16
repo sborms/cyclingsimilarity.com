@@ -7,7 +7,7 @@ This is the backbone repository for `cyclingsimilarity.com` where you can discov
 
 ## Repository setup
 
-For completeness, these are the manuals steps I took to create this repository. You don't have to go over them as can of course simply clone the repository and get started from there, but it might be useful. Inspired from [this](https://github.com/datarootsio/ml-skeleton-py), [this](https://github.com/datarootsio/python-minimal-boilerplate) and [this](https://github.com/nogibjj/mlops-template). Here are the steps:
+For completeness, these are the manual steps I took to create this repository. You don't have to go over them as you can of course simply clone the repository and get started from there, but it might be useful. Inspired from [this](https://github.com/datarootsio/ml-skeleton-py), [this](https://github.com/datarootsio/python-minimal-boilerplate) and [this](https://github.com/nogibjj/mlops-template). Here are the steps:
 
 - Install Poetry (Google it!)
 - Make a GitHub repository and clone it locally
