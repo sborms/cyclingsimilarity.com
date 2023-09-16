@@ -10,11 +10,13 @@ For completeness, these are the manuals steps I took to create this repository. 
 - Make a GitHub repository and clone it locally
 - In your project directory, run following commands:
     - `poetry init`
+    - `poetry config virtualenvs.in-project true`
+        - If you want to create your virtual environment folder directly in your project as `.venv/`
     - `poetry add $(cat requirements.txt)`
-        - Or add all packages manually using `poetry add`
+        - Alternatively, add all packages manually using `poetry add <package_name>`
     - `poetry shell`
         - Run `exit` to get out of the virtual environment
-    (- `poetry install`)
+    - (`poetry install`)
     - `pre-commit install`
     - `touch .pre-commit-config.yaml`
     - `touch Makefile`
