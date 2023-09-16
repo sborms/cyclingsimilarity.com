@@ -1,0 +1,12 @@
+jupyter
+black
+isort
+ruff
+pytest
+pre-commit
+numpy
+pandas
+torch
+fastai
+scikit-learn
+procyclingstats
