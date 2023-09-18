@@ -7,20 +7,20 @@ This is the backbone repository for `cyclingsimilarity.com` where you can discov
 
 ## Repository setup
 
-For completeness, this is an overview of the repository structure and most of the associated steps to set it up. You can of course simply clone the repository and get started from there, but it might be useful. Inspired from [this](https://github.com/datarootsio/ml-skeleton-py), [this](https://github.com/datarootsio/python-minimal-boilerplate) and [this](https://github.com/nogibjj/mlops-template).
+For completeness, this is an overview of the repository structure and most of the associated steps to set it up. You can of course simply clone the repository and get started from there if you are familiar with projects like these. The structure is inspired from [this](https://github.com/datarootsio/ml-skeleton-py), [this](https://github.com/datarootsio/python-minimal-boilerplate) and [this](https://github.com/nogibjj/mlops-template).
 
 In your GitHub repository directory, run following commands to add Poetry (after having installed it first, see Google!) and pre-commit:
-    - `poetry init`
-    - `poetry config virtualenvs.in-project true`
-        - If you want to create your virtual environment folder directly in your project as `.venv/` (comes in handy if your IDE is Visual Studio Code)
-    - `poetry add $(cat requirements.txt)`
-        - Alternatively, add all packages manually using `poetry add <package_name>`
-    - `poetry shell`
-        - Run `exit` to get out of the virtual environment
-    - (`poetry install`)
-    - `pre-commit install`
+- `poetry init`
+- `poetry config virtualenvs.in-project true`
+    - If you want to create your virtual environment folder directly in your project as `.venv/` (comes in handy if your IDE is Visual Studio Code)
+- `poetry add $(cat requirements.txt)`
+    - Alternatively, add all packages manually using `poetry add <package_name>`
+- `poetry shell`
+    - Run `exit` to get out of the virtual environment
+- (`poetry install`)
+- `pre-commit install`
 
-For `Makefile`, `.pre-commit-config.yaml`, and eventually also `docker-compose.yaml` you can copy the contents into these files and modify where needed. The other folders can be populated with the required data, notebooks, scripts, dependencies and other useful artifacts. Apart from the top bit, the `.gitignore` is the Python template from GitHub.
+For `Makefile`, `.pre-commit-config.yaml`, and eventually also `docker-compose.yaml` you can copy the contents into these files and modify where needed. The other folders are populated with the required data, notebooks, scripts, dependencies and other useful artifacts. Apart from the top bit, the `.gitignore` is the Python template from GitHub.
 
 This is a brief explanation of the various subfolders:
 
