@@ -17,7 +17,7 @@ if system() == "Linux":
     )  # if model is trained and stored on a Windows machine but deployed on Linux
 MODEL = load_learner(
     "learner.pkl"
-)  # TODO: put embeddings into a (FAISS) vector database
+)  # TODO: put embeddings into a (FAISS) vector database (e.g. stored on AWS S3)
 
 
 def extract_most_similar_cyclists(
@@ -30,7 +30,7 @@ def extract_most_similar_cyclists(
     return MODEL.dls.classes["rider"][idx_topn]
 
 
-app = FastAPI()
+app = FastAPI(title="cyclingsimilarity.com API")
 
 
 class Body(BaseModel):
@@ -55,8 +55,8 @@ def get_eligible_cyclists():
     """
     Lists all available cyclists in the database.
     """
-    # TODO: get cyclists (+ age, country) from (read-only) cloud database
-    return {"cyclists": MODEL.dls.classes["rider"]}
+    # TODO: get cyclists (+ age, country) from (read-only) cloud database (e.g. AWS RDS)
+    return {"cyclists": list(MODEL.dls.classes["rider"])}
 
 
 @app.post("/list-similar-cyclists")
