@@ -18,4 +18,5 @@ uvicorn
 streamlit
 fire
 faiss-cpu
+boto3
 python-dotenv

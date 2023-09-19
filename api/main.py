@@ -5,6 +5,7 @@
 import pathlib
 from platform import system
 
+import boto3
 from fastai.collab import load_learner
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
