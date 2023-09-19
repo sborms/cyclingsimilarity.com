@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 from fastai.collab import *
 from fastai.tabular.all import *
-from src.aws import authenticate_to_aws, store_data_to_s3, load_data_from_s3
+
+from src.aws import authenticate_to_aws, load_data_from_s3, store_data_to_s3
 
 # TODO: read results_matrix.csv from AWS S3
 # TODO: store learner.pkl on AWS S3
@@ -25,6 +26,7 @@ N_PART = 20  # a rider is considered only if they did at least this amount of ra
 ############################
 ############ FUNCTIONS   ###
 ############################
+
 
 def normalize_results_by_race(df, how):
     if how == "0-1":
@@ -80,9 +82,11 @@ def get_gc_weight(gc: bool):
     """Give more weight to general classification outcomes."""
     return 1.25 if gc is True else 1
 
+
 ############################
 ############ TRAINING    ###
 ############################
+
 
 def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     df_results = pd.read_csv(
@@ -156,7 +160,7 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
         aws_session,
         file="../api/learner.pkl",
         bucket="cyclingsimilarity-s3",
-        key="learner.pkl"
+        key="learner.pkl",
     )
 
 

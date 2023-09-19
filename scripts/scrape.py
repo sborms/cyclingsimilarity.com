@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from procyclingstats import Race, Stage
 from sklearn.feature_extraction import DictVectorizer
+
 from src.aws import authenticate_to_aws, store_data_to_s3
 
 # TODO: store races.xlsx or scrape them more intelligently?
@@ -25,6 +26,7 @@ RACES = (
 ############ FUNCTIONS   ###
 ############################
 
+
 def try_to_parse(obj, slug, printit=False):
     if printit:
         print(f"Parsing > {slug} ...")
@@ -46,9 +48,11 @@ def parse_results_from_stage(stage, rid="results"):
             ]  # e.g. [(WVA, 1), (MVDP, 2), (Pogiboy, 3), ...]
     return results
 
+
 ############################
 ############ SCRAPING    ###
 ############################
+
 
 def scrape(years, cutoffdate, races_list):
     df_races_out_list = []

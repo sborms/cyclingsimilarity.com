@@ -2,30 +2,15 @@
 #### BACKEND             ###
 ############################
 
-import pathlib
-from platform import system
-
-import boto3
-from fastai.collab import load_learner
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from torch import nn
-from src.aws import authenticate_to_aws, store_data_to_s3, load_data_from_s3
 
-# TODO: get learner object from AWS S3
+from src.aws import authenticate_to_aws, load_data_from_s3, load_learner_from_s3
+
 # TODO: get cyclists (+ age, country) from (read-only) cloud database (e.g. AWS RDS)
 
-def read_learner():
-    if system() == "Linux":
-        pathlib.WindowsPath = (
-            pathlib.PosixPath
-        )  # if model is trained and stored on a Windows machine but deployed on Linux
-    learn = load_learner(
-        "learner.pkl"
-    )
-
-    return learn
 
 def extract_most_similar_cyclists(
     cyclist: str, n: int, ages: list = None, countries: list = None
@@ -34,22 +19,25 @@ def extract_most_similar_cyclists(
     factors = MODEL.model.u_weight.weight
     simil = nn.CosineSimilarity(dim=1)(factors, factors[idx_base][None])
     idx_topn = simil.argsort(descending=True)[1 : (n + 1)]
-    
+
     return MODEL.dls.classes["rider"][idx_topn]
 
-aws_session = authenticate_to_aws()
 
-obj = load_data_from_s3(aws_session, bucket="cyclingsimilarity-s3", key="learner.pkl")
-MODEL = read_learner()
+aws_session = authenticate_to_aws()
+MODEL = load_learner_from_s3(
+    aws_session, bucket="cyclingsimilarity-s3", key="learner.pkl"
+)
+
 
 app = FastAPI(title="cyclingsimilarity.com API")
 
+
 class Body(BaseModel):
-    cyclist: str
-    n: int
-    age_min: int
-    age_max: int
-    countries: list[str]
+    cyclist: str = "VAN AERT Wout"
+    n: int = 10
+    age_min: int = 18
+    age_max: int = 35
+    countries: list[str] = [""]
 
 
 @app.get("/")  # read-only
