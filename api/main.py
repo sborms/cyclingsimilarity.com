@@ -11,14 +11,18 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from torch import nn
 
-if system() == "Linux":
-    pathlib.WindowsPath = (
-        pathlib.PosixPath
-    )  # if model is trained and stored on a Windows machine but deployed on Linux
-MODEL = load_learner(
-    "learner.pkl"
-)  # TODO: put embeddings into a (FAISS) vector database (e.g. stored on AWS S3)
+# TODO: get learner object from AWS S3
 
+def read_learner():
+    if system() == "Linux":
+        pathlib.WindowsPath = (
+            pathlib.PosixPath
+        )  # if model is trained and stored on a Windows machine but deployed on Linux
+    learn = load_learner(
+        "learner.pkl"
+    )
+
+    return learn
 
 def extract_most_similar_cyclists(
     cyclist: str, n: int, ages: list = None, countries: list = None
@@ -27,7 +31,11 @@ def extract_most_similar_cyclists(
     factors = MODEL.model.u_weight.weight
     simil = nn.CosineSimilarity(dim=1)(factors, factors[idx_base][None])
     idx_topn = simil.argsort(descending=True)[1 : (n + 1)]
+    
     return MODEL.dls.classes["rider"][idx_topn]
+
+
+MODEL = read_learner()
 
 
 app = FastAPI(title="cyclingsimilarity.com API")
@@ -45,8 +53,8 @@ class Body(BaseModel):
 def root():
     return HTMLResponse(
         "<h2> The FastAPI backend for cyclingsimilarity.com. </h2> \n"
-        "<h3> Go to <i> /docs </i> to start experimenting. </h3> \n"
-        "A mini project by Samuel Borms"
+        "<h3> Go to <b> /docs </b> to start experimenting. </h3> \n"
+        "<i> A mini project by Samuel Borms </i>"
     )
 
 

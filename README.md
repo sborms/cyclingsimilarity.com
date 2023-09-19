@@ -13,11 +13,10 @@ In your GitHub repository directory, run following commands to add Poetry (after
 - `poetry init`
 - `poetry config virtualenvs.in-project true`
     - If you want to create your virtual environment folder directly in your project as `.venv/` (comes in handy if your IDE is Visual Studio Code)
-- `poetry add $(cat requirements.txt)`
+- `poetry add $(cat requirements.txt)` (add dependencies to the `pyproject.toml` file and add them) or `poetry install` (simply install all dependencies, for instance when you cloned the repository)
     - Alternatively, add all packages manually using `poetry add <package_name>`
 - `poetry shell`
     - Run `exit` to get out of the virtual environment
-- (`poetry install`)
 - `pre-commit install`
 
 For `Makefile`, `.pre-commit-config.yaml`, and eventually also `docker-compose.yaml` you can copy the contents into these files and modify where needed. The other folders are populated with the required data, notebooks, scripts, dependencies and other useful artifacts. Apart from the top bit, the `.gitignore` is the Python template from GitHub.

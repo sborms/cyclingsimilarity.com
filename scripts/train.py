@@ -4,9 +4,10 @@ import pandas as pd
 from fastai.collab import *
 from fastai.tabular.all import *
 
-##########################
-############ CONFIG      #
-##########################
+
+############################
+############ CONFIG      ###
+############################
 
 N_FACT = 10  # number of hidden factors
 CURR_YEAR = 2023
@@ -18,9 +19,9 @@ Y_RANGE = (
 )  # (0, 1) or (1, 20.5) or (0, 5.25), multiply by max. of race class weighting
 N_PART = 20  # a rider is considered only if they did at least this amount of race participations
 
-##########################
-############ FUNCTIONS   #
-##########################
+############################
+############ FUNCTIONS   ###
+############################
 
 
 def normalize_results_by_race(df, how):
@@ -78,14 +79,14 @@ def get_gc_weight(gc: bool):
     return 1.25 if gc is True else 1
 
 
-##########################
-############ TRAINING    #
-##########################
+############################
+############ TRAINING    ###
+############################
 
 
 def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     df_results = pd.read_csv(
-        "../data/results_matrix.csv",
+        "../data/results_matrix.csv",  # TODO: read from AWS RDS or S3
         index_col=[0, 1, 2],
         dtype={"year": str, "stage_slug": str, "class": str},
     )
@@ -150,7 +151,7 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     learn.lr_find()
     learn.fit_one_cycle(n_cycles, 0.05, wd=0.1)
 
-    learn.export("../api/learner.pkl")
+    learn.export("../api/learner.pkl")  # TODO: store on AWS
 
 
 if __name__ == "__main__":

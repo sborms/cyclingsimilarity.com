@@ -4,22 +4,23 @@ import pandas as pd
 from procyclingstats import Race, Stage
 from sklearn.feature_extraction import DictVectorizer
 
-##########################
-############ CONFIG      #
-##########################
+# TODO: store cyclists, races, countries into AWS RDS
+
+############################
+############ CONFIG      ###
+############################
 
 YEARS = [2020, 2021, 2022, 2023]
 CUTOFFDATE = "2023-09-18"
 
-df_races = pd.read_excel("../data/races.xlsx").dropna()
+df_races = pd.read_excel("../data/races.xlsx").dropna()  # TODO: replace by call to AWS RDS
 RACES = (
     df_races.set_index("Race").transpose().to_dict("list")
 )  # 1.x = one-day race, 2.x = multi-day race & .UWT > .Pro > .1 > .2
 
-##########################
-############ FUNCTIONS   #
-##########################
-
+############################
+############ FUNCTIONS   ###
+############################
 
 def try_to_parse(obj, slug, printit=False):
     if printit:
@@ -42,11 +43,9 @@ def parse_results_from_stage(stage, rid="results"):
             ]  # e.g. [(WVA, 1), (MVDP, 2), (Pogiboy, 3), ...]
     return results
 
-
-##########################
-############ SCRAPING    #
-##########################
-
+############################
+############ SCRAPING    ###
+############################
 
 def scrape(years, cutoffdate, races_list):
     df_races_out_list = []
@@ -92,7 +91,7 @@ def scrape(years, cutoffdate, races_list):
     df_races_out.dropna(inplace=True)  # drop stages that couldn't be parsed
     df_races_out["results"] = df_races_out["parsed"].apply(parse_results_from_stage)
 
-    # override results for multi-stage general classifications (gc) with actual gc outcome (not final-stage results)
+    # override results for multi-stage gc with actual outcome instead of final-stage results
     mask_gc = (df_races_out["class"].str.contains("2")) & (
         df_races_out["stage_slug"].str.endswith("/")
     )  # alternative: does not contain 'stage-' or 'prologue'
@@ -127,7 +126,7 @@ def scrape(years, cutoffdate, races_list):
         axis=0, how="all"
     )  # drop races that were cancelled or couldn't be parsed
 
-    df_results.to_csv("../data/results_matrix.csv", index=True)
+    df_results.to_csv("../data/results_matrix.csv", index=True)  # TODO: store on AWS RDS or S3
 
 
 if __name__ == "__main__":
