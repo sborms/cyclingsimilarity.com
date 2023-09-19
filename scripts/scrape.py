@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 from procyclingstats import Race, Stage
 from sklearn.feature_extraction import DictVectorizer
+from src.aws import authenticate_to_aws, store_data_to_s3
 
-# TODO: store cyclists, races, countries into AWS RDS
+# TODO: store races.xlsx or scrape them more intelligently?
+# TODO: store id, cyclists, age, countries into AWS S3
+# TODO: store results_matrix.csv on AWS S3
 
 ############################
 ############ CONFIG      ###
@@ -13,7 +16,7 @@ from sklearn.feature_extraction import DictVectorizer
 YEARS = [2020, 2021, 2022, 2023]
 CUTOFFDATE = "2023-09-18"
 
-df_races = pd.read_excel("../data/races.xlsx").dropna()  # TODO: replace by call to AWS RDS
+df_races = pd.read_excel("../data/races.xlsx").dropna()
 RACES = (
     df_races.set_index("Race").transpose().to_dict("list")
 )  # 1.x = one-day race, 2.x = multi-day race & .UWT > .Pro > .1 > .2
@@ -126,7 +129,7 @@ def scrape(years, cutoffdate, races_list):
         axis=0, how="all"
     )  # drop races that were cancelled or couldn't be parsed
 
-    df_results.to_csv("../data/results_matrix.csv", index=True)  # TODO: store on AWS RDS or S3
+    df_results.to_csv("../data/results_matrix.csv", index=True)
 
 
 if __name__ == "__main__":

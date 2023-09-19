@@ -11,8 +11,10 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from torch import nn
+from src.aws import authenticate_to_aws, store_data_to_s3, load_data_from_s3
 
 # TODO: get learner object from AWS S3
+# TODO: get cyclists (+ age, country) from (read-only) cloud database (e.g. AWS RDS)
 
 def read_learner():
     if system() == "Linux":
@@ -35,12 +37,12 @@ def extract_most_similar_cyclists(
     
     return MODEL.dls.classes["rider"][idx_topn]
 
+aws_session = authenticate_to_aws()
 
+obj = load_data_from_s3(aws_session, bucket="cyclingsimilarity-s3", key="learner.pkl")
 MODEL = read_learner()
 
-
 app = FastAPI(title="cyclingsimilarity.com API")
-
 
 class Body(BaseModel):
     cyclist: str
@@ -64,7 +66,6 @@ def get_eligible_cyclists():
     """
     Lists all available cyclists in the database.
     """
-    # TODO: get cyclists (+ age, country) from (read-only) cloud database (e.g. AWS RDS)
     return {"cyclists": list(MODEL.dls.classes["rider"])}
 
 

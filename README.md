@@ -3,7 +3,7 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <!-- [![codecov](https://codecov.io/github/sborms/cyclingsimilarity.com/badge.svg?branch=master&service=github)](https://github.com/sborms/cyclingsimilarity.com/actions) !-->
 
-This is the backbone repository for `cyclingsimilarity.com` where you can discover similar cyclists and races.
+This is the backbone repository for `cyclingsimilarity.com` where you can discover similar cyclists. A natural but not implemented extension includes finding similar races.
 
 ## Repository setup
 

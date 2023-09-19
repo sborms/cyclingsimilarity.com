@@ -3,7 +3,10 @@ import numpy as np
 import pandas as pd
 from fastai.collab import *
 from fastai.tabular.all import *
-from src.aws import store_data_to_s3, load_data_from_s3
+from src.aws import authenticate_to_aws, store_data_to_s3, load_data_from_s3
+
+# TODO: read results_matrix.csv from AWS S3
+# TODO: store learner.pkl on AWS S3
 
 ############################
 ############ CONFIG      ###
@@ -83,7 +86,7 @@ def get_gc_weight(gc: bool):
 
 def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     df_results = pd.read_csv(
-        "../data/results_matrix.csv",  # TODO: read from AWS RDS or S3
+        "../data/results_matrix.csv",
         index_col=[0, 1, 2],
         dtype={"year": str, "stage_slug": str, "class": str},
     )
@@ -146,7 +149,15 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     learn.lr_find()
     learn.fit_one_cycle(n_cycles, 0.05, wd=0.1)
 
-    learn.export("../api/learner.pkl")  # TODO: store on AWS
+    learn.export("../api/learner.pkl")
+
+    aws_session = authenticate_to_aws()
+    store_data_to_s3(
+        aws_session,
+        file="../api/learner.pkl",
+        bucket="cyclingsimilarity-s3",
+        key="learner.pkl"
+    )
 
 
 if __name__ == "__main__":

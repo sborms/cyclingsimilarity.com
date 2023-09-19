@@ -4,6 +4,10 @@ WORKDIR /api
 
 COPY . /api
 
+RUN mkdir -p /src
+
+COPY ../src /api/src
+
 RUN pip install -r requirements.txt
 
 ENTRYPOINT [ "uvicorn" ]
