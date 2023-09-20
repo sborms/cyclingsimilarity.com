@@ -7,12 +7,16 @@ from fastai.tabular.all import *
 
 from src.aws import AWSManager
 
+# TODO: remove '#na#' item and user
+
 ############################
 ############ CONFIG      ###
 ############################
 
+RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
+
+CURR_YEAR = int(RUN_DATE[:4])
 N_FACT = 15  # number of hidden factors
-CURR_YEAR = 2023
 N_CYCL = 5  # number of fit iterations
 NORMALIZE = "bins"  # "0-1", "1-20", "bins"
 Y_RANGE = (
@@ -20,8 +24,6 @@ Y_RANGE = (
     5.25 * 2,
 )  # (0, 1) or (1, 20.5) or (0, 5.25), multiply by max. of race class weighting
 N_PART = 20  # a rider is considered only if they did at least this amount of race participations
-
-RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
 ############################
 ############ FUNCTIONS   ###
@@ -105,9 +107,6 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     df_results = df_results[
         df_results.columns[df_results.count(axis=0) >= n_participations]
     ]
-    df_results.columns = (
-        df_results.columns.str.strip()
-    )  # some columns have trailing whitespaces
     df_results = normalize_results_by_race(df_results, how=normalize)
     df_results = df_results.astype(float)
 
@@ -157,8 +156,8 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     dls = CollabDataLoaders.from_df(df, bs=64)
 
     learn = collab_learner(dls, n_factors=n_factors, y_range=y_range)
-    learn.lr_find()
-    learn.fit_one_cycle(n_cycles, 0.05, wd=0.1)
+    lrs = learn.lr_find(suggest_funcs=(minimum, steep, valley, slide))
+    learn.fit_one_cycle(n_cycles, lrs.valley, wd=0.1)
 
     ###### store output to AWS ######
 

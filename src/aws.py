@@ -50,7 +50,9 @@ class AWSManager:
     def store_data_from_string_to_s3(self, string, bucket, key):
         """Stores a string or text file to specified S3 bucket."""
         s3 = self.session.client("s3")
-        s3.put_object(Bucket=bucket, Key=key, Body=string)
+        response = s3.put_object(Bucket=bucket, Key=key, Body=string)
+
+        AWSManager.get_status(response)
 
     def store_pickle_to_s3(self, obj, bucket, key):
         """Stores an object as a pickle file to specified S3 bucket."""

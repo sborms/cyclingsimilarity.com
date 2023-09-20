@@ -9,12 +9,14 @@ from unidecode import unidecode
 
 from src.aws import AWSManager
 
+# TODO: speed up extraction rider metadata
+
 ############################
 ############ CONFIG      ###
 ############################
 
 YEARS = [2019, 2020, 2021, 2022, 2023]
-CUTOFFDATE = "2023-09-18"
+CUTOFFDATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
 ############################
 ############ FUNCTIONS   ###
@@ -195,9 +197,9 @@ def scrape(years, cutoffdate):
 
     df_results = df_results.dropna(
         axis=0, how="all"
-    )  # drop races that were cancelled or couldn't be parsed
+    )  # drop results that couldn't be parsed
 
-    df_results.columns = [clean_rider_name(c) for c in df_results.columns]
+    df_results.columns = [clean_rider_name(c) for c in df_results.columns.str.strip()]
 
     ###### scrape riders data ######
 
