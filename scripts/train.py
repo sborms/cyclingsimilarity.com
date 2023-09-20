@@ -1,19 +1,17 @@
-import fire
+import timeit
+
 import numpy as np
 import pandas as pd
 from fastai.collab import *
 from fastai.tabular.all import *
 
-from src.aws import authenticate_to_aws, load_data_from_s3, store_data_to_s3
-
-# TODO: read results_matrix.csv from AWS S3
-# TODO: store learner.pkl on AWS S3
+from src.aws import AWSManager
 
 ############################
 ############ CONFIG      ###
 ############################
 
-N_FACT = 10  # number of hidden factors
+N_FACT = 15  # number of hidden factors
 CURR_YEAR = 2023
 N_CYCL = 5  # number of fit iterations
 NORMALIZE = "bins"  # "0-1", "1-20", "bins"
@@ -22,6 +20,8 @@ Y_RANGE = (
     5.25 * 2,
 )  # (0, 1) or (1, 20.5) or (0, 5.25), multiply by max. of race class weighting
 N_PART = 20  # a rider is considered only if they did at least this amount of race participations
+
+RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
 ############################
 ############ FUNCTIONS   ###
@@ -36,7 +36,7 @@ def normalize_results_by_race(df, how):
     if how == "1-20":
         return df.clip(
             upper=20
-        )  # logic is inversed here: higher values indicates lower performance
+        )  # logic is inversed here: higher values indicate lower performance
     if how == "bins":
         return df.apply(
             lambda x: pd.cut(
@@ -89,8 +89,15 @@ def get_gc_weight(gc: bool):
 
 
 def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
-    df_results = pd.read_csv(
-        "../data/results_matrix.csv",
+    aws_manager = AWSManager()
+    s3_bucket = "cyclingsimilarity-s3"
+
+    ###### train embeddings ######
+
+    df_results = aws_manager.load_csv_as_pandas_from_s3(
+        bucket=s3_bucket,
+        key="matrix_race_results.csv",
+        # kwargs
         index_col=[0, 1, 2],
         dtype={"year": str, "stage_slug": str, "class": str},
     )
@@ -153,17 +160,25 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
     learn.lr_find()
     learn.fit_one_cycle(n_cycles, 0.05, wd=0.1)
 
-    learn.export("../api/learner.pkl")
+    ###### store output to AWS ######
 
-    aws_session = authenticate_to_aws()
-    store_data_to_s3(
-        aws_session,
-        file="../api/learner.pkl",
-        bucket="cyclingsimilarity-s3",
-        key="learner.pkl",
+    aws_manager.store_pickle_to_s3(
+        obj=learn, bucket=s3_bucket, key="learner.pkl"
+    )  # partly mimicks learn.export()
+
+    aws_manager.store_data_from_string_to_s3(
+        RUN_DATE, bucket=s3_bucket, key="last_successful_train_run.txt"
     )
 
 
 if __name__ == "__main__":
-    # train(n_factors=N_FACT, curr_year=CURR_YEAR, n_cycles=N_CYCL, normalize=NORMALIZE, y_range=Y_RANGE, n_participations=N_PART)
-    fire.Fire(train)
+    timeit.timeit(
+        train(
+            n_factors=N_FACT,
+            curr_year=CURR_YEAR,
+            n_cycles=N_CYCL,
+            normalize=NORMALIZE,
+            y_range=Y_RANGE,
+            n_participations=N_PART,
+        )
+    )

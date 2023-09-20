@@ -3,3 +3,4 @@ uvicorn
 torch
 fastai
 boto3
+pandas

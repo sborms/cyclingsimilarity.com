@@ -16,7 +16,7 @@ procyclingstats==0.1.7
 fastapi
 uvicorn
 streamlit
-fire
 faiss-cpu
 boto3
 python-dotenv
+unidecode
