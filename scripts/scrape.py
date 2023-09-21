@@ -1,13 +1,12 @@
-import re
 import timeit
 
 import numpy as np
 import pandas as pd
 from procyclingstats import Race, Rider, Stage
 from sklearn.feature_extraction import DictVectorizer
-from unidecode import unidecode
 
 from src.aws import AWSManager
+from src.utils import *
 
 # TODO: speed up extraction rider metadata
 
@@ -15,90 +14,15 @@ from src.aws import AWSManager
 ############ CONFIG      ###
 ############################
 
-YEARS = [2019, 2020, 2021, 2022, 2023]
-CUTOFFDATE = pd.Timestamp.now().strftime("%Y-%m-%d")
-
-############################
-############ FUNCTIONS   ###
-############################
-
-
-def try_to_parse(obj, slug, printit=False):
-    if printit:
-        print(f"Parsing > {slug} ...")
-
-    parsed = None  # fallback
-    try:
-        parsed = obj(slug).parse()
-    except:
-        print(f"Oopsie! This one failed: {slug}")
-    return parsed
-
-
-def parse_results_from_stage(slug, parsed):
-    results = None  # fallback
-    if parsed is not None:
-        try:
-            rid = {"gc": "gc", "result": "results"}[slug.split("/")[-1]]
-        except KeyError:
-            return results
-        if parsed[rid] is not None:
-            results = [
-                (r["rider_name"], r["rank"]) for r in parsed[rid]
-            ]  # e.g. [(WVA, 1), (MVDP, 2), (Pogiboy, 3), ...]
-    return results
-
-
-def clean_rider_name(name):
-    return re.sub(r"\s+", " ", name.replace("\t", ""))
-
-
-def convert_name_to_slug(name):
-    """Convert input from 'FAMILY NAME First Name' to 'first-name-family-name'."""
-    # these manual conversions are of important riders
-    # with a different slug than their used name
-    dict_manual_conversions = {
-        "CORT Magnus": "magnus-cort-nielsen",
-        "AYUSO Juan": "juan-ayuso-pesquera",
-        "FROOME Chris": "christopher-froome",
-        "DUNBAR Eddie": "edward-irl-dunbar",
-        "RODRÍGUEZ Carlos": "carlos-rodriguez-cano",
-        "BARTA Will": "william-barta",
-        "HONORÉ Mikkel Frølich": "mikkel-honore",
-        "HERRADA Jesús": "jesus-herrada-lopez",
-        "GROßSCHARTNER Felix": "felix-grossschartner",
-        "DREßLER Luca": "luca-dressler",
-        "BUITRAGO Santiago": "santiago-buitrago-sanchez",
-        "CHAVES Esteban": "johan-esteban-chaves",
-        "MÜLLER Tobias": "tobias-muller1",
-        "RÜEGG Timon": "timin-ruegg",
-        "SCULLY Tom": "thomas-scully",
-        "SKJELMOSE Mattias": "mattias-skjelmose-jensen",
-        "VALGREN Michael": "michael-valgren-andersen",
-        "VINGEGAARD Jonas": "jonas-vingegaard-rasmussen",
-        "WRIGHT Fred": "alfred-wright",
-    }
-    if name in dict_manual_conversions.keys():
-        return dict_manual_conversions[name]
-
-    slug = "-".join(
-        [_.lower() for _ in name.split(" ") if not _.isupper()]
-        + [_.lower() for _ in name.split(" ") if _.isupper()]
-    )
-
-    slug = slug.replace("--", "-")
-    slug = slug.replace("'", "-")
-    slug = unidecode(slug)
-
-    return slug
-
+RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
+YEARS = [int(RUN_DATE[:4]) - i for i in range(4, -1, -1)]
 
 ############################
 ############ SCRAPING    ###
 ############################
 
 
-def scrape(years, cutoffdate):
+def scrape():
     aws_manager = AWSManager()
     s3_bucket = "cyclingsimilarity-s3"
 
@@ -107,7 +31,7 @@ def scrape(years, cutoffdate):
     df_races = aws_manager.load_csv_as_pandas_from_s3(bucket=s3_bucket, key="races.csv")
 
     df_races_out_list = []
-    for year in years:
+    for year in YEARS:
         races, classes, stages = [], [], []
         for i, row in df_races.iterrows():
             race_key, _, race_class, race_slug = row
@@ -119,7 +43,7 @@ def scrape(years, cutoffdate):
             else:
                 # do not process if race end date is beyond dataset cutoff date
                 # but keep going, because races are not ordered chronologically
-                if race_p["enddate"] > cutoffdate:
+                if race_p["enddate"] > RUN_DATE:
                     continue
 
                 stage_slug_base = race_slug_full.replace(
@@ -242,4 +166,4 @@ def scrape(years, cutoffdate):
 
 
 if __name__ == "__main__":
-    timeit.timeit(scrape(years=YEARS, cutoffdate=CUTOFFDATE))
+    timeit.timeit(scrape())

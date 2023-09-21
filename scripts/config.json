@@ -1,0 +1,9 @@
+{
+    "scrape": {},
+    "train": {
+        "n_factors": 15,
+        "n_cycles": 5,
+        "n_participations": 20,
+        "normalize": "bins"
+    }
+}

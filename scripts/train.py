@@ -1,3 +1,4 @@
+import json
 import timeit
 
 import numpy as np
@@ -6,6 +7,7 @@ from fastai.collab import *
 from fastai.tabular.all import *
 
 from src.aws import AWSManager
+from src.utils import *
 
 # TODO: remove '#na#' item and user
 
@@ -14,83 +16,14 @@ from src.aws import AWSManager
 ############################
 
 RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
-
-CURR_YEAR = int(RUN_DATE[:4])
-N_FACT = 15  # number of hidden factors
-N_CYCL = 5  # number of fit iterations
-NORMALIZE = "bins"  # "0-1", "1-20", "bins"
-Y_RANGE = (
-    0,
-    5.25 * 2,
-)  # (0, 1) or (1, 20.5) or (0, 5.25), multiply by max. of race class weighting
-N_PART = 20  # a rider is considered only if they did at least this amount of race participations
-
-############################
-############ FUNCTIONS   ###
-############################
-
-
-def normalize_results_by_race(df, how):
-    if how == "0-1":
-        return df.rank(
-            axis=1, pct=True, ascending=False, na_option="keep"
-        )  # 1.0 means first, 0.0 means last in race
-    if how == "1-20":
-        return df.clip(
-            upper=20
-        )  # logic is inversed here: higher values indicate lower performance
-    if how == "bins":
-        return df.apply(
-            lambda x: pd.cut(
-                x,
-                bins=[
-                    1,
-                    3,
-                    5,
-                    10,
-                    20,
-                    200,
-                ],  # podium, top-5, top-10, top-20, not in contention
-                labels=[
-                    5,
-                    4,
-                    3,
-                    2,
-                    1,
-                ],  # from best to worse race result, NaN is not participated/finished
-                include_lowest=True,
-            )
-        )
-
-
-def get_year_weight(curr_year, year, decay=0.25):
-    """Give more weight to current and more recent years."""  # bias seems to be impacted by how long riders are active
-    return np.exp(
-        -decay * (curr_year - year)
-    )  # if decay factor is set higher, earlier years receive less weight
-
-
-def get_race_class_weight(race_class):
-    """Give more weight to most important races."""
-    return {"UWT": 2, "Pro": 1.5, "1": 0.75, "2": 0.5}[race_class]
-
-
-def get_stage_weight(stage: bool):
-    """Give less weight to stages from a multi-stage race."""
-    return 0.8 if stage is True else 1
-
-
-def get_gc_weight(gc: bool):
-    """Give more weight to general classification outcomes."""
-    return 1.25 if gc is True else 1
-
+CONFIG = json.load("config.json")
 
 ############################
 ############ TRAINING    ###
 ############################
 
 
-def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
+def train(n_factors, n_cycles, n_participations, normalize):
     aws_manager = AWSManager()
     s3_bucket = "cyclingsimilarity-s3"
 
@@ -112,7 +45,7 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
 
     df_reweight = df_results.index.to_frame().reset_index(drop=True)
     df_reweight["w_year"] = (
-        df_reweight["year"].astype(int).apply(get_year_weight, curr_year=curr_year)
+        df_reweight["year"].astype(int).apply(get_year_weight, curr_year=int(RUN_DATE[:4]))
     )
     df_reweight["w_class"] = (
         df_reweight["class"].str.partition(".")[2].apply(get_race_class_weight)
@@ -155,7 +88,12 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
 
     dls = CollabDataLoaders.from_df(df, bs=64)
 
-    learn = collab_learner(dls, n_factors=n_factors, y_range=y_range)
+    y_range = get_y_range(how=normalize)
+    learn = collab_learner(
+        dls,
+        n_factors=n_factors,
+        y_range=y_range
+    )
     lrs = learn.lr_find(suggest_funcs=(minimum, steep, valley, slide))
     learn.fit_one_cycle(n_cycles, lrs.valley, wd=0.1)
 
@@ -173,11 +111,9 @@ def train(n_factors, curr_year, n_cycles, normalize, y_range, n_participations):
 if __name__ == "__main__":
     timeit.timeit(
         train(
-            n_factors=N_FACT,
-            curr_year=CURR_YEAR,
-            n_cycles=N_CYCL,
-            normalize=NORMALIZE,
-            y_range=Y_RANGE,
-            n_participations=N_PART,
+            n_factors=CONFIG["train"]["n_factors"],
+            n_cycles=CONFIG["train"]["n_cycles"],
+            n_participations=CONFIG["train"]["n_participations"],
+            normalize=CONFIG["train"]["normalize"]
         )
     )
