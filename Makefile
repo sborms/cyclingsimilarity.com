@@ -12,8 +12,9 @@ lint:
 	ruff check .
 
 lint-container:
-	@echo ">>> Linting Dockerfile"
-	docker run --rm -i hadolint/hadolint < Dockerfile
+	@echo ">>> Linting Dockerfiles"
+	docker run --rm -i hadolint/hadolint < api/Dockerfile
+	docker run --rm -i hadolint/hadolint < webapp/Dockerfile
 
 refactor:
 	format lint lint-container

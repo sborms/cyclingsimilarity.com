@@ -10,7 +10,6 @@ numpy
 pandas
 torch
 fastai
-scikit-learn
 openpyxl
 procyclingstats==0.1.7
 fastapi

@@ -1,22 +1,27 @@
 import json
 import timeit
 
-import numpy as np
 import pandas as pd
-from fastai.collab import *
-from fastai.tabular.all import *
+from fastai.collab import CollabDataLoaders, collab_learner
+from fastai.tabular.all import valley
 
 from src.aws import AWSManager
-from src.utils import *
-
-# TODO: remove '#na#' item and user
+from src.utils import (
+    get_gc_weight,
+    get_race_class_weight,
+    get_stage_weight,
+    get_y_range,
+    get_year_weight,
+    normalize_results_by_race,
+)
 
 ############################
 ############ CONFIG      ###
 ############################
 
 RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
-CONFIG = json.load("config.json")
+
+CONFIG = json.load("config.json")["train"]
 
 ############################
 ############ TRAINING    ###
@@ -31,7 +36,7 @@ def train(n_factors, n_cycles, n_participations, normalize):
 
     df_results = aws_manager.load_csv_as_pandas_from_s3(
         bucket=s3_bucket,
-        key="matrix_race_results.csv",
+        key="df_race_results.csv",
         # kwargs
         index_col=[0, 1, 2],
         dtype={"year": str, "stage_slug": str, "class": str},
@@ -45,7 +50,9 @@ def train(n_factors, n_cycles, n_participations, normalize):
 
     df_reweight = df_results.index.to_frame().reset_index(drop=True)
     df_reweight["w_year"] = (
-        df_reweight["year"].astype(int).apply(get_year_weight, curr_year=int(RUN_DATE[:4]))
+        df_reweight["year"]
+        .astype(int)
+        .apply(get_year_weight, curr_year=int(RUN_DATE[:4]))
     )
     df_reweight["w_class"] = (
         df_reweight["class"].str.partition(".")[2].apply(get_race_class_weight)
@@ -89,12 +96,8 @@ def train(n_factors, n_cycles, n_participations, normalize):
     dls = CollabDataLoaders.from_df(df, bs=64)
 
     y_range = get_y_range(how=normalize)
-    learn = collab_learner(
-        dls,
-        n_factors=n_factors,
-        y_range=y_range
-    )
-    lrs = learn.lr_find(suggest_funcs=(minimum, steep, valley, slide))
+    learn = collab_learner(dls, n_factors=n_factors, y_range=y_range)
+    lrs = learn.lr_find(suggest_funcs=(valley))
     learn.fit_one_cycle(n_cycles, lrs.valley, wd=0.1)
 
     ###### store output to AWS ######
@@ -111,9 +114,9 @@ def train(n_factors, n_cycles, n_participations, normalize):
 if __name__ == "__main__":
     timeit.timeit(
         train(
-            n_factors=CONFIG["train"]["n_factors"],
-            n_cycles=CONFIG["train"]["n_cycles"],
-            n_participations=CONFIG["train"]["n_participations"],
-            normalize=CONFIG["train"]["normalize"]
+            n_factors=CONFIG["n_factors"],
+            n_cycles=CONFIG["n_cycles"],
+            n_participations=CONFIG["n_participations"],
+            normalize=CONFIG["normalize"],
         )
     )

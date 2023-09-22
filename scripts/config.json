@@ -1,5 +1,7 @@
 {
-    "scrape": {},
+    "scrape": {
+        "n_years": 5
+    },
     "train": {
         "n_factors": 15,
         "n_cycles": 5,

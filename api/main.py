@@ -25,7 +25,9 @@ UPDATE = aws_manager.load_data_from_s3(
 EMBEDD = aws_manager.load_data_from_s3(
     bucket=s3_bucket, key="learner.pkl", is_pickle=True
 )
-RIDERS = aws_manager.load_csv_to_pandas_from_s3(bucket=s3_bucket, key="riders_data.csv")
+RIDERS = aws_manager.load_csv_to_pandas_from_s3(
+    bucket=s3_bucket, key="df_riders_data.csv"
+)
 
 RIDERS["age"] = (
     (pd.to_datetime(UPDATE) - pd.to_datetime(RIDERS["birth_date"])).dt.days / 365.2425
@@ -63,7 +65,7 @@ def extract_most_similar_cyclists(
     df_population.loc[:, "similarity"] = simil.detach().numpy()
     df_population.sort_values("similarity", ascending=False, inplace=True)
     df_population.reset_index(drop=True, inplace=True)
-    df_population = df_population[df_population["name"] != cyclist]
+    df_population = df_population[~df_population["name"].isin([cyclist, "#na#"])]
 
     return df_population.iloc[:n,]
 

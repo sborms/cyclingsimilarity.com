@@ -1,23 +1,24 @@
 import pathlib
+import re
 from platform import system
 
-import re
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from fastai.collab import load_learner
-from unidecode import unidecode
+from procyclingstats import Rider
 from torch import nn, tensor
+from unidecode import unidecode
 
 
 def try_to_parse(obj, slug, printit=False):
     if printit:
         print(f"Parsing > {slug} ...")
-    
+
     parsed = None  # fallback
     try:
         parsed = obj(slug).parse()
-    except:
+    except (ValueError, AttributeError):
         print(f"Oopsie! This one failed: {slug}")
     return parsed
 
@@ -63,19 +64,29 @@ def convert_name_to_slug(name):
         "SKJELMOSE Mattias": "mattias-skjelmose-jensen",
         "VALGREN Michael": "michael-valgren-andersen",
         "VINGEGAARD Jonas": "jonas-vingegaard-rasmussen",
-        "WRIGHT Fred": "alfred-wright"
+        "WRIGHT Fred": "alfred-wright",
     }
     if name in dict_manual_conversions.keys():
         return dict_manual_conversions[name]
 
-    slug = "-".join([_.lower() for _ in name.split(" ") if not _.isupper()] +
-                    [_.lower() for _ in name.split(" ") if _.isupper()])
-    
+    slug = "-".join(
+        [_.lower() for _ in name.split(" ") if not _.isupper()]
+        + [_.lower() for _ in name.split(" ") if _.isupper()]
+    )
+
     slug = slug.replace("--", "-")
     slug = slug.replace("'", "-")
     slug = unidecode(slug)
 
     return slug
+
+
+def parse_rider_info(rider_slug):
+    try:
+        rider = Rider(f"rider/{rider_slug}")
+        return (rider.nationality(), rider.birthdate())
+    except (ValueError, AttributeError):
+        return (None, None)
 
 
 def normalize_results_by_race(df, how):
@@ -112,7 +123,7 @@ def normalize_results_by_race(df, how):
 
 
 def get_year_weight(curr_year, year, decay=0.25):
-    """Give more weight to current and more recent years."""  # bias seems to be impacted by how long riders are active
+    """Give more weight to more recent years."""  # rider activity impacts bias
     return np.exp(
         -decay * (curr_year - year)
     )  # if decay factor is set higher, earlier years receive less weight
@@ -138,21 +149,33 @@ def get_y_range(how, v):
     # the upper bound includes a slight buffer and is
     # multiplied with the theoretical weighting maximum
     v = 2 * 1 * 1.25
-    
+
     if how == "0-1":
         return (0, 1 * v)
     if how == "1-20":
         return (1, 20.5 * v)
     if how == "bins":
         return (0, 5.25 * v)
-    
+
 
 def extract_factors(learn, dim):
-    return learn.model.u_weight.weight if dim == "rider" else learn.model.i_weight.weight if dim == "stage" else None
+    return (
+        learn.model.u_weight.weight
+        if dim == "rider"
+        else learn.model.i_weight.weight
+        if dim == "stage"
+        else None
+    )
 
 
 def extract_bias(learn, dim):
-    return learn.model.u_bias.weight.squeeze() if dim == "rider" else learn.model.i_bias.weight.squeeze() if dim == "stage" else None
+    return (
+        learn.model.u_bias.weight.squeeze()
+        if dim == "rider"
+        else learn.model.i_bias.weight.squeeze()
+        if dim == "stage"
+        else None
+    )
 
 
 def extract_most_similar_elements(learn, dim="rider", element="VAN AERT Wout", n=20):
@@ -160,14 +183,16 @@ def extract_most_similar_elements(learn, dim="rider", element="VAN AERT Wout", n
     factors = extract_factors(learn, dim)
     idx = learn.dls.classes[dim].o2i[element]
     sim = nn.CosineSimilarity(dim=1)(factors, factors[idx][None])
-    # pd.Series(sim.detach()).sort_values(ascending=False).reset_index(drop=True).plot()  # twisted S-shape
-    idx_topn = sim.argsort(descending=True)[1:(n+1)]
+    # pd.Series(sim.detach()).sort_values(ascending=False).reset_index(drop=True).plot()
+    idx_topn = sim.argsort(descending=True)[1 : (n + 1)]
     return learn.dls.classes[dim][idx_topn]
 
 
 def plot_pca(df, learn, dim, n_plot=50):
     g = df.groupby(dim)["result"].count()
-    top_dim = g.sort_values(ascending=False).index.values[:]  # takes riders with most races or vice versa
+    top_dim = g.sort_values(ascending=False).index.values[
+        :
+    ]  # takes riders with most races or vice versa
     top_idxs = tensor([learn.dls.classes[dim].o2i[m] for m in top_dim])
 
     factors = extract_factors(learn, dim)
@@ -181,8 +206,8 @@ def plot_pca(df, learn, dim, n_plot=50):
     plt.figure(figsize=(7, 7))
     plt.scatter(X, Y)
     for i, x, y in zip(top_dim[idxs], X, Y):
-        plt.text(x, y, i, color=np.random.rand(3)*0.7, fontsize=9)
-    
+        plt.text(x, y, i, color=np.random.rand(3) * 0.7, fontsize=9)
+
     plt.show()
 
 
