@@ -177,7 +177,7 @@ def scrape(n_years):
 if __name__ == "__main__":
     start = time.time()
 
-    print(f"***Running scrape.py script on {RUN_DATE} from directory {DIR_SCRIPT}***")
+    print(f"***Running scrape.py script in directory {DIR_SCRIPT} on {RUN_DATE}***")
     scrape(n_years=CONFIG["n_years"])
 
     print(f"Script ran in {time.time() - start:.0f} seconds")

@@ -1,5 +1,5 @@
 import json
-import os.path as path
+import os
 import sys
 import time
 
@@ -7,8 +7,8 @@ import pandas as pd
 from fastai.collab import CollabDataLoaders, collab_learner
 from fastai.tabular.all import valley
 
-DIR_SCRIPT = path.dirname(path.abspath(__file__))
-sys.path.append(path.dirname(DIR_SCRIPT))
+DIR_SCRIPT = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(DIR_SCRIPT))
 
 from src.aws import AWSManager
 from src.utils import (
@@ -26,7 +26,7 @@ from src.utils import (
 
 RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
-CONFIG = json.load(open(path.join(DIR_SCRIPT, "config.json")))["train"]
+CONFIG = json.load(open(os.path.join(DIR_SCRIPT, "config.json")))["train"]
 
 ############################
 ############ TRAINING    ###
@@ -102,6 +102,7 @@ def train(n_factors, n_epochs, n_participations, normalize):
     y_range = get_y_range(how=normalize)
     learn = collab_learner(dls, n_factors=n_factors, y_range=y_range)
     lrs = learn.lr_find(suggest_funcs=(valley))
+    os.rmdir(os.path.join(os.getcwd(), "models"))
     learn.fit_one_cycle(n_epochs, lrs.valley, wd=0.1)
 
     ###### store output to AWS ######
@@ -118,7 +119,7 @@ def train(n_factors, n_epochs, n_participations, normalize):
 if __name__ == "__main__":
     start = time.time()
 
-    print(f"***Running train.py script on {RUN_DATE} from directory {DIR_SCRIPT}***")
+    print(f"***Running train.py script in directory {DIR_SCRIPT} on {RUN_DATE}***")
     train(
         n_factors=CONFIG["n_factors"],
         n_epochs=CONFIG["n_epochs"],
