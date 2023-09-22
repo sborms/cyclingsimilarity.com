@@ -58,3 +58,9 @@ This is the `FastAPI` backend, which will be deployed to AWS and consumed by the
 `mkdir webapp && touch webapp/app.py && touch webapp/Dockerfile && touch webapp/requirements.txt`
 
 This is the `Streamlit` frontend, which will be deployed to Streamlit Cloud.
+
+## Improvements
+
+A list of some improvements that could be made to the project:
+- The scraping and training scripts would benefit from logging and a progress bar. They can also be turned into a CLI tool. A scheduler (such as Apache Airflow) can be used to run the scripts once every couple of weeks.
+- Filter out retired cyclists (e.g. Tom Dumoulin or Jan Bakelants) by cross-referencing the entire database to the riders active the last year.

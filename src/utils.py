@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from fastai.collab import load_learner
 from procyclingstats import Rider
+from procyclingstats.errors import UnexpectedParsingError
 from torch import nn, tensor
 from unidecode import unidecode
 
@@ -18,7 +19,7 @@ def try_to_parse(obj, slug, printit=False):
     parsed = None  # fallback
     try:
         parsed = obj(slug).parse()
-    except (ValueError, AttributeError):
+    except (ValueError, AttributeError, UnexpectedParsingError):
         print(f"Oopsie! This one failed: {slug}")
     return parsed
 
@@ -122,7 +123,7 @@ def normalize_results_by_race(df, how):
         )
 
 
-def get_year_weight(curr_year, year, decay=0.25):
+def get_year_weight(year, curr_year, decay=0.25):
     """Give more weight to more recent years."""  # rider activity impacts bias
     return np.exp(
         -decay * (curr_year - year)
@@ -136,7 +137,7 @@ def get_race_class_weight(race_class):
 
 def get_stage_weight(stage: bool):
     """Give less weight to stages from a multi-stage race."""
-    return 0.8 if stage is True else 1
+    return 0.7 if stage is True else 1
 
 
 def get_gc_weight(gc: bool):
@@ -144,7 +145,7 @@ def get_gc_weight(gc: bool):
     return 1.25 if gc is True else 1
 
 
-def get_y_range(how, v):
+def get_y_range(how):
     """Returns the 'y_range' input needed in collab_learner()."""
     # the upper bound includes a slight buffer and is
     # multiplied with the theoretical weighting maximum

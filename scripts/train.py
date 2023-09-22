@@ -1,9 +1,14 @@
 import json
-import timeit
+import os.path as path
+import sys
+import time
 
 import pandas as pd
 from fastai.collab import CollabDataLoaders, collab_learner
 from fastai.tabular.all import valley
+
+DIR_SCRIPT = path.dirname(path.abspath(__file__))
+sys.path.append(path.dirname(DIR_SCRIPT))
 
 from src.aws import AWSManager
 from src.utils import (
@@ -21,14 +26,14 @@ from src.utils import (
 
 RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
-CONFIG = json.load("config.json")["train"]
+CONFIG = json.load(open(path.join(DIR_SCRIPT, "config.json")))["train"]
 
 ############################
 ############ TRAINING    ###
 ############################
 
 
-def train(n_factors, n_cycles, n_participations, normalize):
+def train(n_factors, n_epochs, n_participations, normalize):
     aws_manager = AWSManager()
     s3_bucket = "cyclingsimilarity-s3"
 
@@ -61,9 +66,8 @@ def train(n_factors, n_cycles, n_participations, normalize):
         df_reweight["stage_slug"].str.contains("/stage-").apply(get_stage_weight)
     )
     df_reweight["w_gc"] = (
-        (df_reweight["class"].str.contains("2"))
-        & (df_reweight["stage_slug"].str.endswith("/"))
-    ).apply(get_gc_weight)
+        df_reweight["stage_slug"].str.contains("/gc").apply(get_gc_weight)
+    )
     df_reweight["w"] = (
         df_reweight["w_year"]
         * df_reweight["w_class"]
@@ -98,7 +102,7 @@ def train(n_factors, n_cycles, n_participations, normalize):
     y_range = get_y_range(how=normalize)
     learn = collab_learner(dls, n_factors=n_factors, y_range=y_range)
     lrs = learn.lr_find(suggest_funcs=(valley))
-    learn.fit_one_cycle(n_cycles, lrs.valley, wd=0.1)
+    learn.fit_one_cycle(n_epochs, lrs.valley, wd=0.1)
 
     ###### store output to AWS ######
 
@@ -112,11 +116,14 @@ def train(n_factors, n_cycles, n_participations, normalize):
 
 
 if __name__ == "__main__":
-    timeit.timeit(
-        train(
-            n_factors=CONFIG["n_factors"],
-            n_cycles=CONFIG["n_cycles"],
-            n_participations=CONFIG["n_participations"],
-            normalize=CONFIG["normalize"],
-        )
+    start = time.time()
+
+    print(f"***Running train.py script on {RUN_DATE} from directory {DIR_SCRIPT}***")
+    train(
+        n_factors=CONFIG["n_factors"],
+        n_epochs=CONFIG["n_epochs"],
+        n_participations=CONFIG["n_participations"],
+        normalize=CONFIG["normalize"],
     )
+
+    print(f"Script ran in {time.time() - start:.0f} seconds")

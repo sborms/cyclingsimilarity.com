@@ -1,10 +1,15 @@
 import json
-import timeit
+import os.path as path
+import sys
+import time
 
 import numpy as np
 import pandas as pd
 from procyclingstats import Race, Stage
 from sklearn.feature_extraction import DictVectorizer
+
+DIR_SCRIPT = path.dirname(path.abspath(__file__))
+sys.path.append(path.dirname(DIR_SCRIPT))
 
 from src.aws import AWSManager
 from src.utils import (
@@ -21,7 +26,7 @@ from src.utils import (
 
 RUN_DATE = pd.Timestamp.now().strftime("%Y-%m-%d")
 
-CONFIG = json.load("config.json")["scrape"]
+CONFIG = json.load(open(path.join(DIR_SCRIPT, "config.json")))["scrape"]
 
 ############################
 ############ SCRAPING    ###
@@ -80,6 +85,8 @@ def scrape(n_years):
 
     df_races_out = pd.concat(df_races_out_list)
 
+    print("Race overviews are scraped, let's collect all results!")
+
     df_races_out["parsed"] = df_races_out["stage_slug"].apply(
         lambda x: try_to_parse(Stage, x)
     )
@@ -90,6 +97,7 @@ def scrape(n_years):
     print(
         f"{len(stages_not_parsed)} out of {len(df_races_out)} race results not parsed"
     )
+
     df_races_out.dropna(
         subset=["parsed"], inplace=True
     )  # drop stages that couldn't be parsed
@@ -99,10 +107,10 @@ def scrape(n_years):
     )
 
     vec = DictVectorizer()
-    measurements = df_races_out["results"].apply(lambda x: {} if x is None else dict(x))
+    results = df_races_out["results"].apply(lambda x: {} if x is None else dict(x))
 
     df_results = pd.DataFrame(
-        vec.fit_transform(measurements).toarray(),
+        vec.fit_transform(results).toarray(),
         columns=vec.get_feature_names_out(),
         # set year, stage slug, and class as indices
         index=pd.MultiIndex.from_frame(
@@ -119,7 +127,7 @@ def scrape(n_years):
 
     df_results.replace(
         0, np.nan, inplace=True
-    )  # drops distinction between NaN = did not finish race and 0 = did not participate
+    )  # drops distinction between NaN = did not finish and 0 = did not participate
 
     df_results = df_results.dropna(
         axis=0, how="all"
@@ -128,6 +136,8 @@ def scrape(n_years):
     df_results.columns = [clean_rider_name(c) for c in df_results.columns.str.strip()]
 
     ###### scrape riders data ######
+
+    print("Time to scrape some rider metadata!")
 
     riders_all = sorted(df_results.columns)
     df_riders = pd.DataFrame(
@@ -148,7 +158,7 @@ def scrape(n_years):
     ###### coordinate datasets ######
 
     df_results = df_results[
-        [r for r in df_results.columns if r in df_riders.name.tolist()]
+        [r for r in df_results.columns if r in df_riders.rider_name.tolist()]
     ]  # limit to riders with metadata
     print(
         f"Nbr. of riders: {df_riders.shape[0]} (data), {df_results.shape[1]} (results)"
@@ -160,9 +170,14 @@ def scrape(n_years):
         df_riders, bucket=s3_bucket, key="df_riders_data.csv"
     )
     aws_manager.store_pandas_as_csv_to_s3(
-        df_results, bucket=s3_bucket, key="df_race_results.csv"
+        df_results, bucket=s3_bucket, key="df_race_results.csv", index=True
     )
 
 
 if __name__ == "__main__":
-    timeit.timeit(scrape(n_years=CONFIG["n_years"]))
+    start = time.time()
+
+    print(f"***Running scrape.py script on {RUN_DATE} from directory {DIR_SCRIPT}***")
+    scrape(n_years=CONFIG["n_years"])
+
+    print(f"Script ran in {time.time() - start:.0f} seconds")

@@ -11,6 +11,7 @@ from fastai.collab import load_learner
 class AWSManager:
     def __init__(self):
         self.session = AWSManager.authenticate_to_aws()
+        print("Successfully authenticated to AWS.")
 
     @staticmethod
     def authenticate_to_aws():
@@ -65,11 +66,11 @@ class AWSManager:
 
         AWSManager.get_status(response)
 
-    def store_pandas_as_csv_to_s3(self, df, bucket, key):
+    def store_pandas_as_csv_to_s3(self, df, bucket, key, index=False):
         """Stores a pandas DataFrame as a csv file to specified S3 bucket."""
         s3 = self.session.client("s3")
         with io.StringIO() as buffer:
-            df.to_csv(buffer, index=False)
+            df.to_csv(buffer, index=index)
 
             response = s3.put_object(Bucket=bucket, Key=key, Body=buffer.getvalue())
 
