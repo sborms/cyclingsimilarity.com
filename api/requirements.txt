@@ -1,6 +1,7 @@
 fastapi
 uvicorn
-torch
 fastai
-boto3
+torch
 pandas
+boto3
+python-dotenv

@@ -180,4 +180,4 @@ if __name__ == "__main__":
     print(f"***Running scrape.py script in directory {DIR_SCRIPT} on {RUN_DATE}***")
     scrape(n_years=CONFIG["n_years"])
 
-    print(f"Script ran in {time.time() - start:.0f} seconds")
+    print(f"Script ran in {time.time() - start:.0f} seconds")  # c. 30 minutes

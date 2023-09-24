@@ -2,13 +2,13 @@ FROM python:3.9
 
 WORKDIR /api
 
-COPY . /api
+COPY api/. /api
 
-RUN mkdir -p /src
+COPY src/. /api/src
 
-COPY ../src /api/src
+COPY .env /api
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT [ "uvicorn" ]
 

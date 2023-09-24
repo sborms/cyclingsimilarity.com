@@ -127,4 +127,4 @@ if __name__ == "__main__":
         normalize=CONFIG["normalize"],
     )
 
-    print(f"Script ran in {time.time() - start:.0f} seconds")
+    print(f"Script ran in {time.time() - start:.0f} seconds")  # c. 3-4 minutes

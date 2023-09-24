@@ -19,7 +19,7 @@ In your GitHub repository directory, run following commands to add Poetry (after
     - Run `exit` to get out of the virtual environment
 - `pre-commit install`
 
-For `Makefile`, `.pre-commit-config.yaml`, and eventually also `docker-compose.yaml` you can copy the contents into these files and modify where needed. The other folders are populated with the required data, notebooks, scripts, dependencies and other useful artifacts. Apart from the top bit, the `.gitignore` is the Python template from GitHub.
+For files like `Makefile`, `.pre-commit-config.yaml`, and the `Dockerfile`s you can copy over the contents and modify where needed. The other folders are populated with the required data, notebooks, scripts, dependencies and other useful artifacts. Apart from the top bit, the `.gitignore` is the Python template from GitHub.
 
 This is a brief explanation of the various subfolders:
 
@@ -59,8 +59,20 @@ This is the `FastAPI` backend, which will be deployed to AWS and consumed by the
 
 This is the `Streamlit` frontend, which will be deployed to Streamlit Cloud.
 
+## Deployment commands
+
+```bash
+docker build -t api:vx -f api/Dockerfile .
+docker run -it api:vx bash
+docker run -t -p 8080:8080 api
+```
+
 ## Improvements
 
 A list of some improvements that could be made to the project:
-- The scraping and training scripts would benefit from logging and a progress bar. They can also be turned into a CLI tool. A scheduler (such as Apache Airflow) can be used to run the scripts once every couple of weeks.
-- Filter out retired cyclists (e.g. Tom Dumoulin or Jan Bakelants) by cross-referencing the entire database to the riders active the last year.
+- Filter out retired cyclists (e.g. Tom Dumoulin, Jan Bakelants) by cross-referencing all riders to those active during the most recent year.
+- The `scrape.py` and `train.py` scripts can be improved by...
+    - ... integrating logging and a progress bar
+    - ... turning them into a CLI tool
+    - ... defining a scheduler (such as Apache Airflow) to run them once every couple of weeks
+- Use AWS CloudFormation or Terraform to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).

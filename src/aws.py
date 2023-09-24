@@ -1,6 +1,8 @@
 import io
 import os
+import pathlib
 import pickle
+from platform import system
 
 import boto3
 import pandas as pd
@@ -89,6 +91,8 @@ class AWSManager:
 
         # this is a bit tricky in case the request failed
         if is_pickle:
+            if system() == "Linux":
+                pathlib.WindowsPath = pathlib.PosixPath
             obj = pickle.loads(response.get("Body").read())
         else:
             obj = response.get("Body").read()
@@ -113,6 +117,8 @@ class AWSManager:
             data.seek(
                 0
             )  # move back to the beginning after writing (not to disk though)
+            if system() == "Linux":
+                pathlib.WindowsPath = pathlib.PosixPath
             learn = load_learner(
                 data
             )  # only works if first stored via learn.export(), not plain pickle
