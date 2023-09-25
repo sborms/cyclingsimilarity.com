@@ -5,9 +5,11 @@
 .venv
 .coverage
 .cache
+.gitignore
 *.pyc
 **/__pycache__
 coverage.xml
+poetry.lock
 data
 notebooks
 scripts

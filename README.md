@@ -3,7 +3,7 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <!-- [![codecov](https://codecov.io/github/sborms/cyclingsimilarity.com/badge.svg?branch=master&service=github)](https://github.com/sborms/cyclingsimilarity.com/actions) !-->
 
-This is the backbone repository for `cyclingsimilarity.com` where you can discover similar cyclists. A natural but not implemented extension includes finding similar races.
+This is the backbone repository for `cyclingsimilarity.com` where you can discover similar cyclists. Natural but not implemented extensions could include finding similar races or teams.
 
 ## Repository setup
 
@@ -62,10 +62,23 @@ This is the `Streamlit` frontend, which will be deployed to Streamlit Cloud.
 ## Deployment commands
 
 ```bash
-docker build -t api:vx -f api/Dockerfile .
-docker run -it api:vx bash
-docker run -t -p 8080:8080 api
+docker build -t api -f api/Dockerfile .
+docker run -p 8000:8000 api
 ```
+
+To push the image to the AWS ECR repository, check out the specified push commands in the management console.
+
+```bash
+docker build -t webapp -f webapp/Dockerfile .
+docker run -p 8501:8501 webapp
+```
+
+Make sure to have the backend running before starting the Streamlit app. One can use Docker Compose to run both containers at the same time.
+
+## Useful links
+
+These links will help you set up the cloud resources on AWS:
+- https://beabetterdev.com/2023/01/29/ecs-fargate-tutorial-with-fastapi
 
 ## Improvements
 
@@ -76,3 +89,4 @@ A list of some improvements that could be made to the project:
     - ... turning them into a CLI tool
     - ... defining a scheduler (such as Apache Airflow) to run them once every couple of weeks
 - Use AWS CloudFormation or Terraform to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
+- Add more and better unit tests. :sweat_smile:
