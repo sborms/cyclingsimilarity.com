@@ -3,7 +3,9 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <!-- [![codecov](https://codecov.io/github/sborms/cyclingsimilarity.com/badge.svg?branch=master&service=github)](https://github.com/sborms/cyclingsimilarity.com/actions) !-->
 
-This is the backbone repository for `cyclingsimilarity.com` where you can discover similar cyclists. Natural but not implemented extensions could include finding similar races or teams.
+This is the backbone repository for the mini project `cyclingsimilarity.com` where you can discover similar cyclists. Natural but not implemented extensions could include finding similar races or teams.
+
+The _.com_ website doesn't really exist (yet), but the Streamlit web application is hosted [here](https://cyclingsimilarity.streamlit.app).
 
 ## Repository setup
 

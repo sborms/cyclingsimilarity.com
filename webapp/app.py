@@ -2,18 +2,13 @@
 #### FRONTEND            ###
 ############################
 
-import os
-
 import pandas as pd
 import requests
 import streamlit as st
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # BACKEND_URL = "http://localhost:8000"   # --> local development
 # BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yml
-BACKEND_URL = os.getenv("BACKEND_URL")  # --> production
+BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
 
 
 def get_cyclists_info():

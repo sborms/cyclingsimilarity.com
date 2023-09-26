@@ -1,5 +1,6 @@
 # Added
-.ruff_cache
+.ruff_cache/
+.streamlit/
 data/
 
 # Byte-compiled / optimized / DLL files
