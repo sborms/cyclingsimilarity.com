@@ -2,11 +2,18 @@
 #### FRONTEND            ###
 ############################
 
+import os
+
 import pandas as pd
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 
-BACKEND_URL = "http://localhost:8000"
+load_dotenv()
+
+# BACKEND_URL = "http://localhost:8000"   # --> local development
+# BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yml
+BACKEND_URL = os.getenv("BACKEND_URL")  # --> production
 
 
 def get_cyclists_info():
@@ -16,16 +23,19 @@ def get_cyclists_info():
 
 
 def who_is_similar(cyclist, n, age_min, age_max, countries):
-    res = requests.post(
-        f"{BACKEND_URL}/list-similar-cyclists",
-        json={
-            "cyclist": cyclist,
-            "n": n,
-            "age_min": age_min,
-            "age_max": age_max,
-            "countries": countries,
-        },
-    ).json()["cyclists"]
+    try:
+        res = requests.post(
+            f"{BACKEND_URL}/list-similar-cyclists",
+            json={
+                "cyclist": cyclist,
+                "n": n,
+                "age_min": age_min,
+                "age_max": age_max,
+                "countries": countries,
+            },
+        ).json()["cyclists"]
+    except requests.exceptions.JSONDecodeError:
+        return None
 
     df = (
         pd.DataFrame.from_dict(
@@ -100,6 +110,13 @@ with st.sidebar:
 
 similar_cyclists = who_is_similar(cyclist, n, age_min, age_max, countries)
 
-st.markdown(f"These are the {n} cyclists most similar to **{cyclist}**.")
-st.dataframe(similar_cyclists, hide_index=True, use_container_width=True)
-# st.write(similar_cyclists.to_html(index=False, escape=False), unsafe_allow_html=True)
+if similar_cyclists is None:
+    st.markdown("**Oops, the filters give no cyclists. Try relaxing them!**")
+else:
+    st.markdown(
+        f"These are the {len(similar_cyclists)} cyclists most similar to **{cyclist}**."
+    )
+    st.dataframe(similar_cyclists, hide_index=True, use_container_width=True)
+    # st.write(
+    #     similar_cyclists.to_html(index=False, escape=False), unsafe_allow_html=True
+    # )

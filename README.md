@@ -73,12 +73,17 @@ docker build -t webapp -f webapp/Dockerfile .
 docker run -p 8501:8501 webapp
 ```
 
-Make sure to have the backend running before starting the Streamlit app. One can use Docker Compose to run both containers at the same time.
+Make sure to have the backend running before starting the Streamlit app. You can use Docker Compose and the command `docker-compose up -d` to (build and) run both containers at the same time.
 
 ## Useful links
 
-These links will help you set up the cloud resources on AWS:
+These links will help you set up the cloud resources on AWS and deploy FastAPI and Streamlit applications:
+- https://www.youtube.com/watch?v=o7s-eigrMAI (great video!)
 - https://beabetterdev.com/2023/01/29/ecs-fargate-tutorial-with-fastapi
+- https://repost.aws/knowledge-center/ecs-fargate-static-elastic-ip-address
+- https://www.eliasbrange.dev/posts/deploy-fastapi-on-aws-part-2-fargate-alb
+- https://testdriven.io/blog/fastapi-streamlit
+- https://davidefiocco.github.io/streamlit-fastapi-ml-serving
 
 ## Improvements
 
@@ -88,5 +93,5 @@ A list of some improvements that could be made to the project:
     - ... integrating logging and a progress bar
     - ... turning them into a CLI tool
     - ... defining a scheduler (such as Apache Airflow) to run them once every couple of weeks
-- Use AWS CloudFormation or Terraform to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
+- Use AWS CloudFormation, Terraform or the Python AWS CDK to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
 - Add more and better unit tests. :sweat_smile:

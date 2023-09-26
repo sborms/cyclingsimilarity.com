@@ -2,21 +2,25 @@ version: '3'
 
 services:
   fastapi:
-    build: api/
+    build:
+      dockerfile: api\Dockerfile
     ports: 
-      - 8080:8080
+      - 8000:8000
     networks:
       - deploy_network
+    # image: api
     container_name: api
 
   streamlit:
-    build: webapp/
+    build:
+      dockerfile: webapp\Dockerfile
     depends_on:
       - fastapi
     ports: 
         - 8501:8501
     networks:
       - deploy_network
+    # image: webapp
     container_name: webapp
 
 networks:

@@ -6,6 +6,8 @@ COPY webapp/. /webapp
 
 COPY src/. /webapp/src
 
+COPY .env /webapp
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT [ "streamlit" ]
