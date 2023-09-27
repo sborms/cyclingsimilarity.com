@@ -6,7 +6,7 @@
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
 <!-- [![codecov](https://codecov.io/github/sborms/cyclingsimilarity.com/badge.svg?branch=master&service=github)](https://github.com/sborms/cyclingsimilarity.com/actions) !-->
 
-This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously, which you can find [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural but not implemented extensions can be finding similar races or teams.
+This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously, which you can find [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions can be finding similar races or teams.
 
 <p align="center"> <img src="assets/streamlitcyclingsimilarity.png" alt="app"/> </p>
 
@@ -21,7 +21,7 @@ Poetry simplifies overall dependency management. In your GitHub repository direc
 - `poetry add $(cat requirements.txt)` (adds dependencies to the `pyproject.toml` file and downloads them) or `poetry install` (simply install all dependencies, for instance when you cloned the repository)
     - Alternatively, add all packages manually using `poetry add <package_name>`
 - `poetry shell` to activate the virtual environment
-    - Run `exit` to exit the virtual environment
+    - Run `exit` to get out of the virtual environment
 - `pre-commit install`
 
 For files like `Makefile`, `.pre-commit-config.yaml`, and the `Dockerfile`s you can copy over the contents and modify where needed. The other folders are populated with the required data, notebooks, scripts, dependencies and other useful files. Apart from the top bit, the `.gitignore` is the Python template from GitHub.
@@ -50,7 +50,7 @@ Has the Jupyter Notebooks used for data exploration and model development. Have 
 
 ### scripts
 
-Has a `scrape.py` and a `train.py` script. The first one scrapes the data from [procyclingstats.com](https://www.procyclingstats.com/) and the second one fits the cyclist and race embeddings.
+Has a `scrape.py` and a `train.py` script. The first one scrapes the data from [procyclingstats.com](https://www.procyclingstats.com/), the second one fits the cyclist and race embeddings.
 
 ### src
 
@@ -62,7 +62,7 @@ Houses the unit tests (if any).
 
 ### webapp
 
-This is the `Streamlit` frontend, which is deployed to Streamlit Cloud. Changes here are automatically pushed to Streamlit Cloud.
+This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Changes are automatically pushed.
 
 ## Main technologies
 
@@ -117,9 +117,6 @@ These links will help you set up the cloud resources on AWS and deploy FastAPI a
 
 A list of some improvements that could be made to the project:
 - Filter out retired cyclists (e.g. Tom Dumoulin, Jan Bakelants) by cross-referencing all riders to those active during the most recent year.
-- The `scrape.py` and `train.py` scripts can be improved by...
-    - ... integrating logging and a progress bar
-    - ... turning them into a CLI tool
-    - ... defining a scheduler (such as Apache Airflow) to run them once every couple of weeks
+- The `scrape.py` and `train.py` scripts can be improved by (i) integrating logging and a progress bar, (ii) turning them into a CLI tool, (iii) defining a scheduler (such as Apache Airflow) to run them once every couple of weeks.
 - Use AWS CloudFormation, Terraform or the Python AWS CDK to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
 - Add more and better unit tests. :sweat_smile:
