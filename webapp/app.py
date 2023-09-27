@@ -7,10 +7,16 @@ import requests
 import streamlit as st
 
 # BACKEND_URL = "http://localhost:8000"   # --> local development
-# BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yml
+# BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yaml
 BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
 
 
+@st.cache
+def retrieve_last_refresh_date():
+    return requests.get(f"{BACKEND_URL}/last-update").json()["date"]
+
+
+@st.cache
 def get_cyclists_info():
     res = requests.get(f"{BACKEND_URL}/cyclists").json()["cyclists"]
 
@@ -57,10 +63,6 @@ def who_is_similar(cyclist, n, age_min, age_max, countries):
     df.columns = [c.capitalize() for c in df.columns]
 
     return df
-
-
-def retrieve_last_refresh_date():
-    return requests.get(f"{BACKEND_URL}/last-update").json()["date"]
 
 
 last_update_date = retrieve_last_refresh_date()

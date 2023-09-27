@@ -28,7 +28,7 @@ test:
 	python -m pytest -vv
 
 test-docker:
-	@echo ">>> Running unit tests within an isolated docker environment"
+	@echo ">>> Running unit tests within an isolated Docker environment"
 	docker-compose up test
 	
 train:

@@ -112,7 +112,7 @@ def get_eligible_cyclists():
 
 @app.post("/list-similar-cyclists")
 def list_similar_cyclists(body: Body):
-    """Lists the n most similar cyclists for given base cyclist and filters."""
+    """Lists the n most similar cyclists given base cyclist and filters."""
     res = extract_most_similar_cyclists(
         cyclist=body.cyclist,
         n=body.n,

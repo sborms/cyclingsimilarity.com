@@ -10,6 +10,7 @@
 **/__pycache__
 coverage.xml
 poetry.lock
+assets
 data
 notebooks
 scripts
