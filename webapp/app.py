@@ -6,9 +6,9 @@ import pandas as pd
 import requests
 import streamlit as st
 
-BACKEND_URL = "http://localhost:8000"  # --> local development
+# BACKEND_URL = "http://localhost:8000"  # --> local development
 # BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yaml
-# BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
+BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
 
 
 st.set_page_config(
