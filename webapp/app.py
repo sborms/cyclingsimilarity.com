@@ -6,9 +6,9 @@ import pandas as pd
 import requests
 import streamlit as st
 
-# BACKEND_URL = "http://localhost:8000"  # --> local development
+BACKEND_URL = "http://localhost:8000"  # --> local development
 # BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yaml
-BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
+# BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
 
 
 st.set_page_config(
@@ -103,18 +103,22 @@ with st.sidebar:
     # st.write("Select the desired countries of the similar cyclists.")
     countries = st.multiselect("What nationalities can they have?", available_countries)
 
-    # st.write("Click the button below to find similar cyclists.")
-    # go = st.button("Find em!")
+    go = st.button("Find em!")
 
-similar_cyclists = who_is_similar(cyclist, n, age_min, age_max, countries)
+sim_cyclists = who_is_similar(cyclist, n, age_min, age_max, countries)
 
-if similar_cyclists is None:
-    st.markdown("**_Oops, these filters give no cyclists... Try again!_**")
+if go:
+    if sim_cyclists is None:
+        st.markdown("***Oops, these filters give no cyclists... Try again!***")
+    else:
+        st.markdown(
+            f"These are the {len(sim_cyclists)} cyclists most similar to **{cyclist}**."
+        )
+        st.dataframe(sim_cyclists, hide_index=True, use_container_width=True)
+        # st.write(
+        #     similar_cyclists.to_html(index=False, escape=False), unsafe_allow_html=True
+        # )
 else:
     st.markdown(
-        f"These are the {len(similar_cyclists)} cyclists most similar to **{cyclist}**."
+        "***Click on the 'Find em!' button once you're happy with all parameters.***"
     )
-    st.dataframe(similar_cyclists, hide_index=True, use_container_width=True)
-    # st.write(
-    #     similar_cyclists.to_html(index=False, escape=False), unsafe_allow_html=True
-    # )

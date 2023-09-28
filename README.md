@@ -64,7 +64,7 @@ Houses the unit tests.
 
 ### webapp
 
-This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Changes are automatically pushed.
+This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Changes are automatically pushed but you need to reboot the app to display the newest version.
 
 ## Main technologies
 
