@@ -6,21 +6,24 @@ import pandas as pd
 import requests
 import streamlit as st
 
-# BACKEND_URL = "http://localhost:8000"   # --> local development
+# BACKEND_URL = "http://localhost:8000"  # --> local development
 # BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yaml
 BACKEND_URL = st.secrets["BACKEND_URL"]  # --> production
 
 
-@st.cache
+st.set_page_config(
+    page_title="Cyclist Similarity Tool", page_icon="🚴‍♂️", layout="wide"
+)
+
+
+@st.cache_data
 def retrieve_last_refresh_date():
     return requests.get(f"{BACKEND_URL}/last-update").json()["date"]
 
 
-@st.cache
+@st.cache_data
 def get_cyclists_info():
-    res = requests.get(f"{BACKEND_URL}/cyclists").json()["cyclists"]
-
-    return res
+    return requests.get(f"{BACKEND_URL}/cyclists").json()["cyclists"]
 
 
 def who_is_similar(cyclist, n, age_min, age_max, countries):
@@ -77,12 +80,10 @@ idx_wva = list(available_cyclists).index("VAN AERT Wout")
 ###### app ######
 #################
 
-st.set_page_config(page_title="Cycling Similarity Tool", page_icon="🚴‍♂️", layout="wide")
-
 st.header("Find Similar Cyclists")
 st.markdown(
     "_A mini project by Samuel Borms_ &rarr; "
-    "_[GitHub repository](https://github.com/sborms/cyclingsimilarity.com)_ :blush:"
+    "[GitHub repository](https://github.com/sborms/cyclingsimilarity.com) :blush:"
 )
 st.markdown(f"**Last update**: {last_update_date}")
 # st.markdown("---")
@@ -108,7 +109,7 @@ with st.sidebar:
 similar_cyclists = who_is_similar(cyclist, n, age_min, age_max, countries)
 
 if similar_cyclists is None:
-    st.markdown("**Oops, the filters give no cyclists. Try relaxing them!**")
+    st.markdown("**_Oops, these filters give no cyclists... Try again!_**")
 else:
     st.markdown(
         f"These are the {len(similar_cyclists)} cyclists most similar to **{cyclist}**."

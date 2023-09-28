@@ -1,4 +1,4 @@
-# Cycling Similarity Tool
+# Cyclist Similarity Tool
 
 [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cyclingsimilarity.streamlit.app)
 [![Medium article](https://img.shields.io/badge/Medium-View%20on%20Medium-red?logo=medium)](https://medium.com/@sborms/aws-streamlit-and-collaborative-filtering-a-simple-recipe-for-finding-comparable-cyclists-63327970fe64)
@@ -75,7 +75,7 @@ This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Chan
 
 ## AWS infrastructure
 
-The following AWS resources are used to support the project:
+The following AWS cloud resources are used to support the project:
 - **S3** for storing artifacts
 - **Elastic Container Registry (ECR)** for storing Docker images
 - **Elastic Container Service (ECS)** of type **Fargate** for running Docker containers
