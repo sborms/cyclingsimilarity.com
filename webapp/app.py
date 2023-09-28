@@ -77,9 +77,9 @@ idx_wva = list(available_cyclists).index("VAN AERT Wout")
 ###### app ######
 #################
 
-title = "Find Similar Cyclists"
-st.set_page_config(page_title=title, layout="wide")
-st.header(title)
+st.set_page_config(page_title="Cycling Similarity Tool", page_icon="🚴‍♂️", layout="wide")
+
+st.header("Find Similar Cyclists")
 st.markdown(
     "_A mini project by Samuel Borms_ &rarr; "
     "_[GitHub repository](https://github.com/sborms/cyclingsimilarity.com)_ :blush:"
