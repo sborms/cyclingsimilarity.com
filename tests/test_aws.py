@@ -3,7 +3,7 @@ import pytest
 from src.aws import AWSManager
 
 
-@pytest.mark.skip(reason="avoids connecting to AWS")
+@pytest.mark.skip(reason="to avoid connecting to AWS")
 def test_s3_bucket_exists():
     aws_manager = AWSManager()
 

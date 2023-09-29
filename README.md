@@ -1,10 +1,10 @@
 # Cyclist Similarity Tool
 
+[![Run CI/CD pipeline](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml/badge.svg)](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml)
 [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://cyclingsimilarity.streamlit.app)
 [![Medium article](https://img.shields.io/badge/Medium-View%20on%20Medium-red?logo=medium)](https://medium.com/@sborms/aws-streamlit-and-collaborative-filtering-a-simple-recipe-for-finding-comparable-cyclists-63327970fe64)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
-[![Run CI/CD pipeline](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml/badge.svg)](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml)
 
 This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously, which is [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
 
@@ -32,7 +32,7 @@ This is a brief explanation of the various subfolders:
 
 ### .github
 
-Has the GitHub Actions workflow specifications.
+Has the GitHub Actions CI/CD workflow specifications.
 
 ### api
 
