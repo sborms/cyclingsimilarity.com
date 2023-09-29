@@ -36,7 +36,7 @@ Has the GitHub Actions CI/CD workflow specifications.
 
 ### api
 
-This is the `FastAPI` backend. A Docker container image is deployed to AWS ECR, the container runs with AWS ECS on Fargate. The various API endpoints are consumed by the frontend.
+This is the `FastAPI` backend. A Docker image is deployed to AWS ECR, the container runs with AWS ECS on Fargate. The various API endpoints are consumed by the frontend.
 
 ### assets
 
@@ -76,14 +76,14 @@ This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Chan
 ## AWS infrastructure
 
 The following AWS cloud resources are used to support the project:
-- **S3** for storing artifacts
-- **Elastic Container Registry (ECR)** for storing Docker images
-- **Elastic Container Service (ECS)** of type **Fargate** for running Docker containers
-- **Application Load Balancer (ALB)** for routing traffic to the Fargate tasks
+- **S3** for storing several artifacts
+- **Elastic Container Registry (ECR)** for storing Docker images (in this case the Docker image for the FastAPI backend)
+- **Elastic Container Service (ECS)** of type **Fargate** for running a Docker container
+- **Application Load Balancer (ALB)** for routing traffic to the Fargate task(s)
 
 ## Deployment commands
 
-Below are a set of useful commands for containerized deployment. To push an image to an AWS ECR repository, check out the specified push commands in the AWS management console.
+Below are a set of useful commands for containerized deployment. To push a Docker image to an AWS ECR repository, check out the specified push commands in the AWS management console.
 
 This builds the FastAPI application.
 
