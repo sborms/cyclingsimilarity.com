@@ -1,0 +1,8 @@
+pytest
+pytest-cov
+numpy
+pandas
+procyclingstats==0.1.7
+boto3
+python-dotenv
+unidecode

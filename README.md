@@ -122,3 +122,4 @@ A list of some improvements that could be made to the project:
 - The `scrape.py` and `train.py` scripts can be improved by (i) integrating logging and a progress bar, (ii) turning them into a CLI tool, (iii) defining a scheduler (such as Apache Airflow) to run them once every couple of weeks.
 - Use AWS CloudFormation, Terraform or the Python AWS CDK to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
 - Add more and better unit tests. :sweat_smile:
+- Add more CI/CD through GitHub Actions.

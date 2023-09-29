@@ -193,7 +193,7 @@ def plot_pca(df, learn, dim, n_plot=50):
     g = df.groupby(dim)["result"].count()
     top_dim = g.sort_values(ascending=False).index.values[
         :
-    ]  # takes riders with most races or vice versa
+    ]  # sorts riders according to number of races or vice versa
     top_idxs = tensor([learn.dls.classes[dim].o2i[m] for m in top_dim])
 
     factors = extract_factors(learn, dim)
