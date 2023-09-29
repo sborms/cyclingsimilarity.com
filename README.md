@@ -4,7 +4,7 @@
 [![Medium article](https://img.shields.io/badge/Medium-View%20on%20Medium-red?logo=medium)](https://medium.com/@sborms/aws-streamlit-and-collaborative-filtering-a-simple-recipe-for-finding-comparable-cyclists-63327970fe64)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
-<!-- [![codecov](https://codecov.io/github/sborms/cyclingsimilarity.com/badge.svg?branch=master&service=github)](https://github.com/sborms/cyclingsimilarity.com/actions) !-->
+[![Run CI/CD pipeline](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml/badge.svg)](https://github.com/sborms/cyclingsimilarity.com/actions/workflows/cicd.yaml)
 
 This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously, which is [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
 
@@ -121,5 +121,5 @@ A list of some improvements that could be made to the project:
 - Filter out retired cyclists (e.g. Tom Dumoulin, Jan Bakelants) by cross-referencing all riders to those active during the most recent year.
 - The `scrape.py` and `train.py` scripts can be improved by (i) integrating logging and a progress bar, (ii) turning them into a CLI tool, (iii) defining a scheduler (such as Apache Airflow) to run them once every couple of weeks.
 - Use AWS CloudFormation, Terraform or the Python AWS CDK to automate the creation of the AWS cloud resources (i.e. adding an IaC layer).
-- Add more and better unit tests. :sweat_smile:
+- Add more and better unit tests (and a Codecov status badge). :sweat_smile:
 - Add more CI/CD through GitHub Actions.
