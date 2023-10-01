@@ -18,7 +18,7 @@ Poetry simplifies overall dependency management. In your GitHub repository direc
 - `poetry init`
 - `poetry config virtualenvs.in-project true`
     - If you want to create your virtual environment folder directly in your project as `.venv/` (comes in handy if your IDE is Visual Studio Code)
-- `poetry add $(cat requirements.txt)` (adds dependencies to the `pyproject.toml` file and downloads them) or `poetry install` (simply install all dependencies, for instance when you cloned the repository)
+- `poetry add $(cat requirements.txt)` (adds dependencies to the `pyproject.toml` file and downloads them) or `poetry install` (simply installs all dependencies, for instance when you cloned the repository)
     - Alternatively, add all packages manually using `poetry add <package_name>`
 - `poetry shell` to activate the virtual environment
     - Run `exit` to get out of the virtual environment

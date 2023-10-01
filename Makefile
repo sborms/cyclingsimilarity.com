@@ -1,7 +1,6 @@
 install:
 	@echo ">>> Installing dependencies"
-	# pip install --upgrade pip && pip install -r requirements.txt
-	poetry add $(cat requirements.txt)
+	pip install --upgrade pip && pip install -r requirements.txt
 
 format:
 	@echo ">>> Formatting files using Black"
@@ -26,10 +25,6 @@ coverage:
 test:
 	@echo ">>> Running unit tests within existing environment"
 	python -m pytest -vv
-
-test-docker:
-	@echo ">>> Running unit tests within an isolated Docker environment"
-	docker-compose up test
 	
 train:
 	@echo ">>> Training model"
