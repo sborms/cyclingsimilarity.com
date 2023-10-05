@@ -25,7 +25,11 @@ coverage:
 test:
 	@echo ">>> Running unit tests within existing environment"
 	python -m pytest -vv
-	
+
+scrape:
+	@echo ">>> Scraping data from PCS"
+	python ./scripts/scrape.py
+
 train:
-	@echo ">>> Training model"
+	@echo ">>> Training collaborative filtering model"
 	python ./scripts/train.py
