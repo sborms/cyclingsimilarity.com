@@ -10,6 +10,10 @@ This is the backbone repository for a mini project dubbed `cyclingsimilarity.com
 
 <p align="center"> <img src="assets/streamlitcyclingsimilarity.png" alt="app"/> </p>
 
+### Accuracy
+
+Due to the way the collaborative filtering algorithm is currently set up, the output might not seem intuitive for some cyclists. Big races are deliberately overweighted, so cyclists who participated mostly in smaller races will have more random similar cyclists. The algorithm is results-based, meaning that cyclists who rarely cross the finish line amongst the first ten to twenty (despite being good, such as breakaway kings or strong helpers; the same applies to new cyclists) will be lost in translation. As with any model there is some more tweaking to do, but the gist is there.
+
 ## Repository setup
 
 For completeness, this is an overview of the repository structure and some of the associated steps to set it up. You can of course simply clone the repository and get started from there if you are familiar with projects like these. The structure is inspired from [this](https://github.com/datarootsio/ml-skeleton-py), [this](https://github.com/datarootsio/python-minimal-boilerplate) and [this](https://github.com/nogibjj/mlops-template).
@@ -81,7 +85,26 @@ The following AWS cloud resources are used to support the project:
 - **Elastic Container Service (ECS)** of type **Fargate** for running a Docker container
 - **Application Load Balancer (ALB)** for routing traffic to the Fargate task(s)
 
-## Deployment commands
+The total cost is about 0.35 USD per day, almost entirely coming from ECS (without any auto scaling).
+
+## Refresh
+
+To update the application, you just need to run two commands. Although not required, ideally you'd run them both at the same time so the training stays synchronized with the data.
+
+The first command reruns the scraper and stores data on AWS.
+```bash
+make scrape
+```
+
+The second command reads in the newly scraped data from AWS and trains the embeddings, then stores the model output again on AWS.
+
+```bash
+make train
+```
+
+That's it! The FastAPI backend reads whatever data is available on AWS, so in a sense it is automatically updated. Same for the Streamlit app, who relies on the backend, meaning there is no need to redeploy.
+
+## Deployment
 
 Below are a set of useful commands for containerized deployment. To push a Docker image to an AWS ECR repository, check out the specified push commands in the AWS management console.
 
