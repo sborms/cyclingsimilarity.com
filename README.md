@@ -87,7 +87,7 @@ Following combination of AWS cloud resources was initially used to support the p
 
 The total cost amounted to about 0.35 USD per day, almost entirely coming from ECS (without any auto scaling).
 
-_In the meantime, the backend API has been transferred from ECS to a free alternative called [Render](https://render.com). This service fully takes care of deployment if you reference a Dockerfile. The main downside is that it goes to sleep rather quickly, so for most user it will take a few minutes for the app to be ready. [Vercel](https://vercel.com) was another free option but it complained about the size of the Docker image._
+_In the meantime, the backend API has been transferred from ECS to a free alternative called [Render](https://render.com). This service fully takes care of deployment if you reference a Dockerfile. The main downside is that it goes to sleep rather quickly, so for most users it will take a few minutes for the app to be ready. [Vercel](https://vercel.com) was another free option but it complained about the size of the Docker image._
 
 ## Refresh
 
