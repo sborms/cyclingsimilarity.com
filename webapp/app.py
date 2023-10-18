@@ -4,6 +4,7 @@
 
 import pandas as pd
 import requests
+from requests.exceptions import JSONDecodeError, MissingSchema
 import streamlit as st
 
 # BACKEND_URL = "http://localhost:8000"  # --> local development
@@ -38,7 +39,7 @@ def who_is_similar(cyclist, n, age_min, age_max, countries):
                 "countries": countries,
             },
         ).json()["cyclists"]
-    except requests.exceptions.JSONDecodeError:
+    except JSONDecodeError:
         return None
 
     df = (
@@ -62,7 +63,11 @@ def disable_go_button():
     st.session_state.disabled = True
 
 
-last_update_date = retrieve_last_refresh_date()
+try:
+    last_update_date = retrieve_last_refresh_date()
+except (JSONDecodeError, MissingSchema):
+    st.error("Damn, the backend server is not running. Please try again later.")
+    st.stop()
 
 cyclists_info = get_cyclists_info()
 available_cyclists = cyclists_info.keys()
