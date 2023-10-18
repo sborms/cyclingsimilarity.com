@@ -79,13 +79,15 @@ This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Chan
 
 ## AWS infrastructure
 
-The following AWS cloud resources are used to support the project:
+Following combination of AWS cloud resources was initially used to support the project:
 - **S3** for storing several artifacts
 - **Elastic Container Registry (ECR)** for storing Docker images (in this case the Docker image for the FastAPI backend)
 - **Elastic Container Service (ECS)** of type **Fargate** for running a Docker container
 - **Application Load Balancer (ALB)** for routing traffic to the Fargate task(s)
 
-The total cost is about 0.35 USD per day, almost entirely coming from ECS (without any auto scaling).
+The total cost amounted to about 0.35 USD per day, almost entirely coming from ECS (without any auto scaling).
+
+_In the meantime, the backend API has been transferred from ECS to a free alternative called [Render](https://render.com). This service fully takes care of deployment by pointing to a Dockerfile. [Vercel](https://vercel.com) was another free option but it complained about the size of the Docker image._
 
 ## Refresh
 
