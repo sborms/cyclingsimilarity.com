@@ -6,13 +6,13 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
 
-This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously, which is [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
+This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
 
 <p align="center"> <img src="assets/streamlitcyclingsimilarity.png" alt="app"/> </p>
 
 ### Accuracy
 
-Due to the way the collaborative filtering algorithm is currently set up, the output might not seem intuitive for some cyclists. Big races are deliberately overweighted, so cyclists who participated mostly in smaller races will have more random similar cyclists. The algorithm is results-based, meaning that cyclists who rarely cross the finish line amongst the first ten to twenty (despite being good, such as breakaway kings or strong helpers; the same applies to new cyclists) will be lost in translation. As with any model there is some more tweaking to do, but the gist is there.
+Due to the way the collaborative filtering algorithm is currently set up, the output might not seem intuitive for some cyclists. Big races are deliberately overweighted, so cyclists who participated mostly in smaller races will have more random similar cyclists. The algorithm is results-based, meaning that cyclists who rarely cross the finish line amongst the first ten to twenty will be lost in translation (despite being good, such as breakaway kings or strong helpers; the same applies to new cyclists). As with any model there is some more tweaking to do, but the gist is there.
 
 ## Repository setup
 
@@ -40,7 +40,7 @@ Has the GitHub Actions CI/CD workflow specifications.
 
 ### api
 
-This is the `FastAPI` backend. A Docker image is deployed to AWS ECR, the container runs with AWS ECS on Fargate. The various API endpoints are consumed by the frontend.
+This is the `FastAPI` backend. Initially, the Docker image was deployed to AWS ECR and the container ran with AWS ECS on Fargate. Currently, the image is built and runs on the free Render. The various API endpoints are consumed by the frontend.
 
 ### assets
 
@@ -87,13 +87,14 @@ Following combination of AWS cloud resources was initially used to support the p
 
 The total cost amounted to about 0.35 USD per day, almost entirely coming from ECS (without any auto scaling).
 
-_In the meantime, the backend API has been transferred from ECS to a free alternative called [Render](https://render.com). This service fully takes care of deployment by pointing to a Dockerfile. [Vercel](https://vercel.com) was another free option but it complained about the size of the Docker image._
+_In the meantime, the backend API has been transferred from ECS to a free alternative called [Render](https://render.com). This service fully takes care of deployment if you reference a Dockerfile. [Vercel](https://vercel.com) was another free option but it complained about the size of the Docker image._
 
 ## Refresh
 
 To update the application, you just need to run two commands. Although not required, ideally you'd run them both at the same time so the training stays synchronized with the data.
 
-The first command reruns the scraper and stores data on AWS.
+The first command reruns the scraper and stores the cyclists and results data on AWS.
+
 ```bash
 make scrape
 ```
@@ -104,7 +105,7 @@ The second command reads in the newly scraped data from AWS and trains the embed
 make train
 ```
 
-That's it! The FastAPI backend reads whatever data is available on AWS, so in a sense it is automatically updated. Same for the Streamlit app, who relies on the backend, meaning there is no need to redeploy.
+That's it! The FastAPI backend reads whatever data is available on AWS, so in a sense it is automatically updated. Same for the Streamlit app, which relies on the backend, meaning there is no need to redeploy.
 
 ## Deployment
 
