@@ -4,8 +4,8 @@
 
 import pandas as pd
 import requests
-from requests.exceptions import JSONDecodeError, MissingSchema
 import streamlit as st
+from requests.exceptions import JSONDecodeError, MissingSchema
 
 # BACKEND_URL = "http://localhost:8000"  # --> local development
 # BACKEND_URL = "http://fastapi:8000"  # --> docker-compose.yaml

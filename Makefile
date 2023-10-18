@@ -3,7 +3,8 @@ install:
 	pip install --upgrade pip && pip install -r requirements.txt
 
 format:
-	@echo ">>> Formatting files using Black"
+	@echo ">>> Formatting files using isort and Black"
+	isort .
 	black .
 
 lint:
