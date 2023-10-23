@@ -68,7 +68,7 @@ Houses the unit tests.
 
 ### webapp
 
-This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Changes are automatically pushed but you need to reboot the app to display the newest version.
+This is the `Streamlit` frontend, which is deployed to **Streamlit Cloud**. Changes in this folder are in principle automatically incorporated into the app. Other changes require you to reboot the app to display the newest version.
 
 ## Main technologies
 
@@ -91,7 +91,7 @@ _In the meantime, the backend API has been transferred from ECS to a free altern
 
 ## Refresh
 
-To update the application, you just need to run two commands. Although not required, ideally you'd run them both at the same time so the training stays synchronized with the data.
+To update the data behind the application, you just need to run two commands. Although not required, ideally you'd run them both at the same time so the training stays synchronized with the scraped data.
 
 The first command reruns the scraper and stores the cyclists and results data on AWS.
 
