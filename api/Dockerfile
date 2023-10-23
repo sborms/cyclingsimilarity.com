@@ -16,4 +16,4 @@ ENTRYPOINT [ "uvicorn" ]
 
 EXPOSE 8000
 
-CMD [ "--host", "0.0.0.0", "--port", "8000", "main:app"]
+CMD [ "--host", "0.0.0.0", "--port", "8000", "main:app" ]
