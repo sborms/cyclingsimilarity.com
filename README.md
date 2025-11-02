@@ -6,6 +6,9 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
 
+> [!NOTE]  
+> Service is suspended, but you can still use the code to build it out yourself!
+
 This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
 
 <p align="center"> <img src="assets/streamlitcyclingsimilarity.png" alt="app"/> </p>
@@ -140,3 +143,4 @@ These links will help you set up the cloud resources on AWS and deploy FastAPI a
 - https://www.eliasbrange.dev/posts/deploy-fastapi-on-aws-part-2-fargate-alb
 - https://testdriven.io/blog/fastapi-streamlit
 - https://davidefiocco.github.io/streamlit-fastapi-ml-serving
+
