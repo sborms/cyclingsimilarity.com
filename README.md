@@ -7,7 +7,7 @@
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org)
 
 > [!NOTE]  
-> Service is suspended, but you can still use the code to build it out yourself!
+> Service is suspended, but you can still use the code to build it out yourself! Scraping ProCyclingStats (PCS) is prohibited under their ToS so you'd have to get input data from elsewhere. ⚠️
 
 This is the backbone repository for a mini project dubbed `cyclingsimilarity.com`. The _.com_ website doesn't really exist (yet) as it's more meant as a quirk, but the main output is an actual Streamlit web application which is hosted [here](https://cyclingsimilarity.streamlit.app). You can use it to discover similar cyclists. It is in some sense a "productionized" version of a Dash app I developed previously [here](https://github.com/DataWanderers/find-a-similar-pro-cyclist). Natural extensions to the project include finding similar races or teams.
 
